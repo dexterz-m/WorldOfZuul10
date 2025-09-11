@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "LyljEPoxscs=",
+  "success": true,
+  "projectFilePath": "/Users/danilsm/Desktop/WorldOfZuul/WorldOfZuul/WorldOfZuul.csproj",
+  "expectedPackageFiles": [
+    "/Users/danilsm/.nuget/packages/microsoft.netcore.app.ref/6.0.36/microsoft.netcore.app.ref.6.0.36.nupkg.sha512",
+    "/Users/danilsm/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.36/microsoft.aspnetcore.app.ref.6.0.36.nupkg.sha512",
+    "/Users/danilsm/.nuget/packages/microsoft.netcore.app.host.osx-arm64/6.0.36/microsoft.netcore.app.host.osx-arm64.6.0.36.nupkg.sha512"
+  ],
+  "logs": []
+}
