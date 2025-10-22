@@ -8,23 +8,24 @@ namespace WorldOfZuul
 {
     public class Parser
     {
-        private readonly CommandWords commandWords = new();
+        private readonly CommandWords _commandWords = new();
 
         public Command? GetCommand(string inputLine)
         {
             string[] words = inputLine.Split();
 
-            if (words.Length == 0 || !commandWords.IsValidCommand(words[0]))
+            if (words.Length == 0 || !_commandWords.IsValidCommand(words[0]))
             {
                 return null;
             }
 
-            if (words.Length > 1)
+            return words.Length switch
             {
-                return new Command(words[0], words[1]);
-            }
-
-            return new Command(words[0]);
+                1 => new Command(words[0]),
+                2 => new Command(words[0], words[1]),
+                3 => new Command(words[0], words[1], words[2]),
+                _ => null
+            };
         }
     }
 
