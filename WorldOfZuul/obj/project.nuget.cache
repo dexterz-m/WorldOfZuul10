@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "LyljEPoxscs=",
+  "dgSpecHash": "DFaSsvaGp+k=",
   "success": true,
-  "projectFilePath": "/Users/danilsm/Desktop/WorldOfZuul/WorldOfZuul/WorldOfZuul.csproj",
+  "projectFilePath": "C:\\Users\\zolik\\Documents\\Semseter Project\\WorldOfZuul10\\WorldOfZuul\\WorldOfZuul.csproj",
   "expectedPackageFiles": [
-    "/Users/danilsm/.nuget/packages/microsoft.netcore.app.ref/6.0.36/microsoft.netcore.app.ref.6.0.36.nupkg.sha512",
-    "/Users/danilsm/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.36/microsoft.aspnetcore.app.ref.6.0.36.nupkg.sha512",
-    "/Users/danilsm/.nuget/packages/microsoft.netcore.app.host.osx-arm64/6.0.36/microsoft.netcore.app.host.osx-arm64.6.0.36.nupkg.sha512"
+    "C:\\Users\\zolik\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.36\\microsoft.netcore.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\zolik\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.36\\microsoft.windowsdesktop.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\zolik\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.36\\microsoft.aspnetcore.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\zolik\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.36\\microsoft.netcore.app.host.win-x64.6.0.36.nupkg.sha512"
   ],
   "logs": []
 }

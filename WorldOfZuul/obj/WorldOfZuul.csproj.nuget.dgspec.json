@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/danilsm/Desktop/WorldOfZuul/WorldOfZuul/WorldOfZuul.csproj": {}
+    "C:\\Users\\zolik\\Documents\\Semseter Project\\WorldOfZuul10\\WorldOfZuul\\WorldOfZuul.csproj": {}
   },
   "projects": {
-    "/Users/danilsm/Desktop/WorldOfZuul/WorldOfZuul/WorldOfZuul.csproj": {
+    "C:\\Users\\zolik\\Documents\\Semseter Project\\WorldOfZuul10\\WorldOfZuul\\WorldOfZuul.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/danilsm/Desktop/WorldOfZuul/WorldOfZuul/WorldOfZuul.csproj",
+        "projectUniqueName": "C:\\Users\\zolik\\Documents\\Semseter Project\\WorldOfZuul10\\WorldOfZuul\\WorldOfZuul.csproj",
         "projectName": "WorldOfZuul",
-        "projectPath": "/Users/danilsm/Desktop/WorldOfZuul/WorldOfZuul/WorldOfZuul.csproj",
-        "packagesPath": "/Users/danilsm/.nuget/packages/",
-        "outputPath": "/Users/danilsm/Desktop/WorldOfZuul/WorldOfZuul/obj/",
+        "projectPath": "C:\\Users\\zolik\\Documents\\Semseter Project\\WorldOfZuul10\\WorldOfZuul\\WorldOfZuul.csproj",
+        "packagesPath": "C:\\Users\\zolik\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\zolik\\Documents\\Semseter Project\\WorldOfZuul10\\WorldOfZuul\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/danilsm/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\zolik\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
@@ -37,7 +37,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net6.0": {
@@ -59,11 +60,15 @@
               "version": "[6.0.36, 6.0.36]"
             },
             {
-              "name": "Microsoft.NETCore.App.Host.osx-arm64",
+              "name": "Microsoft.NETCore.App.Host.win-x64",
               "version": "[6.0.36, 6.0.36]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.36, 6.0.36]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
               "version": "[6.0.36, 6.0.36]"
             }
           ],
@@ -72,7 +77,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.414/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\zolik\\.dotnet\\sdk\\9.0.305\\RuntimeIdentifierGraph.json"
         }
       }
     }
