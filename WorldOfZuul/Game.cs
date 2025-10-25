@@ -54,6 +54,7 @@
             while (continuePlaying && _currentDay <= MaxDay)
             {
                 Console.WriteLine(_currentRoom?.ShortDescription);
+                RoomInfo(_currentRoom!.ShortDescription);
                 Console.Write("> ");
 
                 string? input = Console.ReadLine();
@@ -127,6 +128,7 @@
             if(id != -1 && id < _rooms.Count)
             {
                 _currentRoom = _rooms[id];
+                
             }
             else
             {
@@ -171,6 +173,51 @@
             Console.WriteLine("sleep                                  Skip the remaining moves");
             Console.WriteLine("exit                                   Exit game");
             Console.ReadKey();
+        }
+
+        private static void RoomInfo(string shortDesc)
+        {
+            
+            
+            switch (shortDesc)
+            {
+                case "Forest":
+                    Console.WriteLine("Trees: 30"); // placeholders for roominfos and potential commands
+                    Console.WriteLine("Animals: 10"); 
+                    Console.WriteLine("");
+                    Console.WriteLine("cut tree");
+                    Console.WriteLine("plant tree");
+                    Console.WriteLine("kill animal");
+                    Console.WriteLine("");
+                    break;
+                case "Village":
+                    Console.WriteLine("Villigers: 20");
+                    Console.WriteLine("Houses: 5");
+                    Console.WriteLine("");
+                    Console.WriteLine("feed -[VILLAGER ID] [AMOUNT/DAY]       Feeds villager and activates it");
+                    Console.WriteLine("assign -[VILLAGER ID] [JOB NAME]       Assigns villager to a task");
+                    Console.WriteLine("");
+                    break;
+                case "Lake":
+                    Console.WriteLine("Fishes: 7");
+                    Console.WriteLine("");
+                    Console.WriteLine("catch Fish");
+                    Console.WriteLine("");
+                    break;
+                case "School":
+                    Console.WriteLine("Read about sustainability");
+                    Console.WriteLine("");
+                    break;
+                case "FarmlandMain":
+                    Console.WriteLine("Farmlands: 1");
+                    Console.WriteLine("");
+                    Console.WriteLine("Build framland");
+                    Console.WriteLine("Cut down forest for farmland");
+                    Console.WriteLine("");
+                    break;
+            }
+            
+            
         }
         
         private static void Assign(string? villagerId, string? jobId)
