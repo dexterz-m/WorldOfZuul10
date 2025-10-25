@@ -8,7 +8,7 @@ namespace WorldOfZuul
 {
     public class CommandWords
     {
-        public List<string> ValidCommands { get; } = new List<string> { "ls", "feed", "talk", "sleep", "assign", "build", "help", "quit" };
+        public List<string> ValidCommands { get; } = new List<string> { "ls", "feed", "talk", "sleep", "assign", "build", "help", "quit", "cd" };
 
         public bool IsValidCommand(string command)
         {

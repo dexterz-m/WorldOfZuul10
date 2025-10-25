@@ -15,14 +15,32 @@
 
         private void CreateRooms()
         {
-            Room village = new("Outside", "You are standing outside the main entrance of the university. To the east is a large building, to the south is a computing lab, and to the west is the campus pub.");
-            Room forest = new("Theatre", "You find yourself inside a large lecture theatre. Rows of seats ascend up to the back, and there's a podium at the front. It's quite dark and quiet.");
-            Room farmlands = new("Pub", "You've entered the campus pub. It's a cozy place, with a few students chatting over drinks. There's a bar near you and some pool tables at the far end.");
+            //Room? farmland1 = new("Farmland1", "(Placeholder farmlands1)");
+            //Room? farmland2 = new("Farmlands2", "(Placeholder farmlands2)");
+            //Room? farmland3 = new("Farmlands3", "(Placeholder farmlands3)");
+            Room farmlandMain = new("FarmlandMain", "(Placeholder farmlandMain)");
+            
+            Room forest = new("Forest", "(Placeholder forest)");
+            Room village = new("Village", "(Placeholder village)");
+            Room lake = new("Lake", "(Placeholder lake)");
+            Room school = new("School", "(Placeholder school)");
 
             _rooms.Add(village);
             _rooms.Add(forest);
-            _rooms.Add(farmlands);
+            _rooms.Add(farmlandMain);
+            _rooms.Add(lake);
+            _rooms.Add(school);
             
+            /*
+            village.SetExits(farmlandMain, school, lake, forest); // North, East, South, West
+            farmlandMain.SetExits(farmland2, farmland3, village, farmland1); 
+            farmland1.SetExit("east", farmlandMain);
+            farmland2.SetExit("south", farmlandMain);
+            farmland3.SetExit("west", farmlandMain);
+            forest.SetExits(null, village, lake, null); 
+            lake.SetExits(village, null, null, forest);
+            school.SetExit("west", village);
+            */
             _currentRoom = _rooms[0];
         }
 
@@ -93,8 +111,29 @@
             throw new NotImplementedException();
         }
 
-        private void ChangeRoom(string? idString)
+        private void ChangeRoom(string? nameString)
         {
+
+            int id = -1;
+            
+            foreach (Room rName in _rooms!)
+            {
+                if (nameString == rName!.ShortDescription)
+                {
+                    id = _rooms.IndexOf(rName);
+                }
+            }
+            
+            if(id != -1 && id < _rooms.Count)
+            {
+                _currentRoom = _rooms[id];
+            }
+            else
+            {
+                Console.WriteLine("No room with this name! Try again or see 'help' for syntax.");
+            }
+            
+            /*
             int id;
             try {
                 id = Convert.ToInt32(idString);
@@ -103,11 +142,12 @@
                 Console.WriteLine("Room ID must be a number! Try again or see 'help' for syntax.");
                 return;
             }
-            
+
             if (id >= _rooms.Count || id < 0) {
                 Console.WriteLine("No room with id {}! Try 'ls r' to see all the rooms.");
             }
             _currentRoom = _rooms[id];
+            */
         }
 
 
@@ -169,7 +209,7 @@
             //TODO: add resource gain based on villager experience
         }
 
-        private static void List(char? type)
+        private void List(char? type)
         {
             switch (type)
             {
@@ -180,7 +220,11 @@
                     Console.WriteLine("Jobs");
                     break;
                 case 'r':
-                    Console.WriteLine("Rooms");
+                    
+                    foreach (Room roomName in _rooms!)
+                    {
+                        Console.WriteLine(roomName!.ShortDescription);
+                    }
                     break;
                 default:
                     Console.WriteLine("Wrong command! Try 'help' to see syntax.");
