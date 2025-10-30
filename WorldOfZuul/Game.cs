@@ -97,9 +97,9 @@
                         PrintHelp();
                         break;
                     case "hunt":
-                        food++;
+                        //food++;
                         break;
-                    case "farm";
+                    case "farm":
                         break;
                     default:
                         Console.WriteLine("I don't know what command.");
@@ -225,7 +225,7 @@
             
         }
         
-        private static void Assign(string? villagerId, string? jobId)
+        private void Assign(string? villagerId, string? jobId)
         {
             int vId;
             int jId;
@@ -254,10 +254,12 @@
 
             //TODO: add villager to a room based on job
             /*
-             * _rooms.AssignVillager(villagerId, jId);
-             * _rooms.Remove(villagerId);
+             * _rooms[0]?.AssignVillager(vId, jId);
+             * _rooms[0]?.RemoveVillager(vId);
+             * 
+             * _rooms[0]?.PrintVl();
+             * _rooms[0]?.PrintJb();
              */
-            
             //TODO: add resource gain based on villager experience
         }
 
