@@ -96,6 +96,11 @@
                     case "help":
                         PrintHelp();
                         break;
+                    case "hunt":
+                        food++;
+                        break;
+                    case "farm";
+                        break;
                     default:
                         Console.WriteLine("I don't know what command.");
                         break;
