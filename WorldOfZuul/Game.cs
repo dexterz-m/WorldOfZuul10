@@ -1,4 +1,6 @@
-﻿namespace WorldOfZuul
+﻿using WorldOfZuul.RoomType;
+
+namespace WorldOfZuul
 {
     public class Game
     {
@@ -6,6 +8,10 @@
         private Room? _currentRoom;
         private int _currentDay;
         private const int MaxDay = 10;
+        private bool _continuePlaying = true; // moved to field so rooms can change it via requests
+
+        // Global sustainability points defined in Game (static so accessible from Room)
+        public static int SustainabilityPoints { get; set; } = 10;
 
         public Game()
         {
@@ -17,20 +23,22 @@
         {
             //Room? farmland1 = new("Farmland1", "(Placeholder farmlands1)");
             //Room? farmland2 = new("Farmlands2", "(Placeholder farmlands2)");
-            //Room? farmland3 = new("Farmlands3", "(Placeholder farmlands3)");
-            Room farmlandMain = new("FarmlandMain", "(Placeholder farmlandMain)");
-            
-            Room forest = new("Forest", "(Placeholder forest)");
-            Room village = new("Village", "(Placeholder village)");
-            Room lake = new("Lake", "(Placeholder lake)");
-            Room school = new("School", "(Placeholder school)");
+            //Room? farmland3 = new("Farmland3", "(Placeholder farmlands3)");
+            Farmland farmlandMain = new("FarmlandMain", "(Placeholder farmlandMain)");
+
+            Forest forest = new("Forest", "(Placeholder forest)");
+            Village village = new("Village", "(Placeholder village)");
+            Lake lake = new("Lake", "(Placeholder lake)");
+            School school = new("School", "(Placeholder school)");
 
             _rooms.Add(village);
             _rooms.Add(forest);
             _rooms.Add(farmlandMain);
             _rooms.Add(lake);
             _rooms.Add(school);
-            
+
+            // Do not assign callbacks here. Rooms will set request properties and Game will read them in the main loop.
+
             /*
             village.SetExits(farmlandMain, school, lake, forest); // North, East, South, West
             farmlandMain.SetExits(farmland2, farmland3, village, farmland1); 
@@ -49,12 +57,13 @@
             Parser parser = new();
 
             PrintWelcome();
+            Console.WriteLine($"You are starting in the {_currentRoom?.ShortDescription}");
+            _currentRoom?.EnterRoom();
 
-            bool continuePlaying = true;
-            while (continuePlaying && _currentDay <= MaxDay)
+            while (_continuePlaying && _currentDay <= MaxDay)
             {
-                Console.WriteLine(_currentRoom?.ShortDescription);
-                RoomInfo(_currentRoom!.ShortDescription);
+                //Console.WriteLine(_currentRoom?.ShortDescription);
+                //RoomInfo(_currentRoom!.ShortDescription);
                 Console.Write("> ");
 
                 string? input = Console.ReadLine();
@@ -73,55 +82,47 @@
                     continue;
                 }
 
-                switch(command.Name)
+                // Handle global commands here so they work from any room
+                switch (command.Name)
                 {
                     case "ls":
-                        List(command.SecondWord == null? null :  Convert.ToChar(command.SecondWord));
+                        List(command.SecondWord == null ? null : Convert.ToChar(command.SecondWord));
                         break;
                     case "cd":
                         ChangeRoom(command.SecondWord);
                         break;
-                    case "feed":
-                        Feed();
-                        break;
-                    case "assign":
-                        Assign(command.SecondWord, command.ThirdWord);
-                        break;
                     case "sleep":
                         _currentDay++;
+                        Console.WriteLine($"Day advanced to {_currentDay}.");
                         break;
                     case "quit":
-                        continuePlaying = false;
-                        break;
-                    case "help":
-                        PrintHelp();
-                        break;
-                    case "hunt":
-                        //food++;
-                        break;
-                    case "farm":
+                        _continuePlaying = false;
                         break;
                     default:
-                        Console.WriteLine("I don't know what command.");
+                        // Not a global command: pass it to the current room to handle
+                        _currentRoom?.CommandList(command);
                         break;
                 }
+
+
+                // Prevent SustainabilityPoints from going negative
+                if (SustainabilityPoints < 0)
+                {
+                    Console.WriteLine($"You lost");
+                    _continuePlaying = false;
+                    // end of the game
+                }
+
             }
 
             Console.WriteLine("Thank you for playing World of Zuul!");
-        }
-
-        private void Feed()
-        {
-            //TODO: Add daily food consumption to a villager
-            //Implement after Villagers and Resource 
-            throw new NotImplementedException();
         }
 
         private void ChangeRoom(string? nameString)
         {
 
             int id = -1;
-            
+
             foreach (Room rName in _rooms!)
             {
                 if (nameString == rName!.ShortDescription)
@@ -129,32 +130,19 @@
                     id = _rooms.IndexOf(rName);
                 }
             }
-            
-            if(id != -1 && id < _rooms.Count)
+
+            if (id != -1 && id < _rooms.Count)
             {
                 _currentRoom = _rooms[id];
-                
+
             }
             else
             {
                 Console.WriteLine("No room with this name! Try again or see 'help' for syntax.");
             }
-            
-            /*
-            int id;
-            try {
-                id = Convert.ToInt32(idString);
-            }
-            catch (FormatException) {
-                Console.WriteLine("Room ID must be a number! Try again or see 'help' for syntax.");
-                return;
-            }
 
-            if (id >= _rooms.Count || id < 0) {
-                Console.WriteLine("No room with id {}! Try 'ls r' to see all the rooms.");
-            }
-            _currentRoom = _rooms[id];
-            */
+            Console.WriteLine("You have entered the " + _currentRoom?.ShortDescription);
+            _currentRoom?.EnterRoom();
         }
 
 
@@ -162,12 +150,13 @@
         {
             Console.WriteLine("Welcome to the World of Zuul!");
             Console.WriteLine("World of Zuul is a new, incredibly boring adventure game.");
-            PrintHelp();
-            Console.WriteLine();
+            //PrintHelp();
+
         }
 
         private static void PrintHelp()
         {
+            Console.WriteLine("Here are available commands");
             Console.WriteLine("help                                   Bring up this information");
             Console.WriteLine("ls v                                   List out all villagers and their status");
             Console.WriteLine("ls r                                   List out all rooms");
@@ -182,13 +171,13 @@
 
         private static void RoomInfo(string shortDesc)
         {
-            
-            
+
+
             switch (shortDesc)
             {
                 case "Forest":
                     Console.WriteLine("Trees: 30"); // placeholders for roominfos and potential commands
-                    Console.WriteLine("Animals: 10"); 
+                    Console.WriteLine("Animals: 10");
                     Console.WriteLine("");
                     Console.WriteLine("cut tree");
                     Console.WriteLine("plant tree");
@@ -221,47 +210,11 @@
                     Console.WriteLine("");
                     break;
             }
-            
-            
+
+
         }
-        
-        private void Assign(string? villagerId, string? jobId)
-        {
-            int vId;
-            int jId;
-            try
-            {
-                vId = Convert.ToInt32(villagerId);
-                jId = Convert.ToInt32(jobId);
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("VillagerID and jobID must be a number! Try again or see 'help' for syntax.");
-                return;
-            }
-
-            //TODO: Add upper limit based on villagers list
-            if (vId < 0 )
-            {
-                Console.WriteLine("No Villager with id {0}! Try 'ls v' to see villagers", vId);
-            }
-            //TODO: Add upper limit based on jobs
-            if (jId < 0 )
-            {
-                Console.WriteLine("No Villager with id {0}! Try 'ls v' to see villagers", jId);
-            }
 
 
-            //TODO: add villager to a room based on job
-            /*
-             * _rooms[0]?.AssignVillager(vId, jId);
-             * _rooms[0]?.RemoveVillager(vId);
-             * 
-             * _rooms[0]?.PrintVl();
-             * _rooms[0]?.PrintJb();
-             */
-            //TODO: add resource gain based on villager experience
-        }
 
         private void List(char? type)
         {
@@ -274,7 +227,7 @@
                     Console.WriteLine("Jobs");
                     break;
                 case 'r':
-                    
+
                     foreach (Room roomName in _rooms!)
                     {
                         Console.WriteLine(roomName!.ShortDescription);
