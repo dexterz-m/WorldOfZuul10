@@ -21,10 +21,8 @@ namespace WorldOfZuul
 
         private void CreateRooms()
         {
-            //Room? farmland1 = new("Farmland1", "(Placeholder farmlands1)");
-            //Room? farmland2 = new("Farmlands2", "(Placeholder farmlands2)");
-            //Room? farmland3 = new("Farmland3", "(Placeholder farmlands3)");
-            Farmland farmlandMain = new("FarmlandMain", "(Placeholder farmlandMain)");
+            
+            Farmland farmlandMain = new("Farmland", "(Placeholder farmlandMain)");
 
             Forest forest = new("Forest", "(Placeholder forest)");
             Village village = new("Village", "(Placeholder village)");
@@ -36,19 +34,7 @@ namespace WorldOfZuul
             _rooms.Add(farmlandMain);
             _rooms.Add(lake);
             _rooms.Add(school);
-
-            // Do not assign callbacks here. Rooms will set request properties and Game will read them in the main loop.
-
-            /*
-            village.SetExits(farmlandMain, school, lake, forest); // North, East, South, West
-            farmlandMain.SetExits(farmland2, farmland3, village, farmland1); 
-            farmland1.SetExit("east", farmlandMain);
-            farmland2.SetExit("south", farmlandMain);
-            farmland3.SetExit("west", farmlandMain);
-            forest.SetExits(null, village, lake, null); 
-            lake.SetExits(village, null, null, forest);
-            school.SetExit("west", village);
-            */
+            
             _currentRoom = _rooms[0];
         }
 
