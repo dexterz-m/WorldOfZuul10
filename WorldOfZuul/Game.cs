@@ -102,6 +102,20 @@ namespace WorldOfZuul
                     case "quit":
                         _continuePlaying = false;
                         break;
+                    case "hunt":
+                        // food++;
+                        // animals--;
+                        // sustainability--;
+                        break;
+                    case "farm":
+                        // grains++;
+                        // seeds--;
+                        break;
+                    case "chop":
+                        // wood++;
+                        // trees--;
+                        //sustainability--
+                        break;
                     default:
                         // Not a global command: pass it to the current room to handle
                         _currentRoom?.CommandList(command);
