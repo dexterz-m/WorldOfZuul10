@@ -1,4 +1,7 @@
-﻿namespace WorldOfZuul
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Xml.Serialization;
+
+namespace WorldOfZuul
 {
     public class Game
     {
@@ -11,6 +14,25 @@
         {
             _rooms = new List<Room?>();
             CreateRooms();
+
+
+            // Deafult values for trackable variables.
+            // We have to discuss with what values does the player start
+            // Now they are just defined.
+
+            // Sustainability point tracker
+
+            int sustainability; // Later we cauculate default starting points, so it's possible for player to play.
+
+            // Food and farming related
+            int food;
+            int grainseeds;
+            int grains;
+
+            // animals and forest related 
+            int animals;
+            int trees;
+
         }
 
         private void CreateRooms()
@@ -97,10 +119,20 @@
                         PrintHelp();
                         break;
                     case "hunt":
-                        //food++;
+                        // food++;
+                        // animals--;
+                        // sustainability--;
                         break;
                     case "farm":
+                        // grains++;
+                        // seeds--;
                         break;
+                    case "chop":
+                        // wood++;
+                        // trees--;
+                        //sustainability--
+                        break;
+
                     default:
                         Console.WriteLine("I don't know what command.");
                         break;
