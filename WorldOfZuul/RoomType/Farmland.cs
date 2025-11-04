@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorldOfZuul.Jobs;
-
-namespace WorldOfZuul.RoomType
+﻿namespace WorldOfZuul.RoomType
 {
     public class Farmland : Room
     {
