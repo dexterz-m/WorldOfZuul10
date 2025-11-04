@@ -11,9 +11,9 @@ namespace WorldOfZuul
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
 
+        //Sustainability variable
         private int sustainability;
 
-        
         // Food and farming variables
         private int food;
         private int grainseeds;
@@ -46,7 +46,7 @@ namespace WorldOfZuul
             // Food and farming (Starting values should be discussed).
 
             food = 2;
-            grainseeds = 0;
+            grainseeds = 5;
             grains = 0;
             hunger = 50;
 
@@ -135,8 +135,11 @@ namespace WorldOfZuul
                         sustainability -= 5;
                         break;
                     case "farm":
-                        grains++;
                         grainseeds--;
+                        break;
+                    case "harvest":
+                        grains++;
+                        sustainability -= 5;
                         break;
                     case "chop":
                         wood++;
@@ -147,6 +150,10 @@ namespace WorldOfZuul
                     case "plant":
                         saplings--;
                         sustainability += 10;
+                        break;
+                    case "cook":
+                        grains -= 2;
+                        food++;
                         break;
                     default:
                         // Not a global command: pass it to the current room to handle
