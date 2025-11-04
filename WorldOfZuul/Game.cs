@@ -1,13 +1,15 @@
-﻿using System.Diagnostics;
-using WorldOfZuul.RoomType;
+﻿using WorldOfZuul.RoomType;
 
 namespace WorldOfZuul
 {
     public class Game
     {
         private readonly List<Room?> _rooms;
+        private readonly List<Villager> _villagers;
         private Room? _currentRoom;
         private int _currentDay;
+        private int _currentTurn = 0;
+        private const int MaxTurnPerDay = 10;
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
 
@@ -34,6 +36,8 @@ namespace WorldOfZuul
         {
             _rooms = new List<Room?>();
             CreateRooms();
+            _villagers = new List<Villager>();
+            CreateVillagers();
 
             // Deafult values for trackable variables.
             // We have to discuss with what values does the player start
@@ -63,7 +67,6 @@ namespace WorldOfZuul
         {
             
             Farmland farmlandMain = new("Farmland", "(Placeholder farmlandMain)");
-
             Forest forest = new("Forest", "(Placeholder forest)");
             Village village = new("Village", "(Placeholder village)");
             Lake lake = new("Lake", "(Placeholder lake)");
@@ -76,6 +79,13 @@ namespace WorldOfZuul
             _rooms.Add(school);
             
             _currentRoom = _rooms[0];
+        }
+
+        private void CreateVillagers()
+        {
+            
+            var v1 = new Villager(0, "asd");
+            _villagers.Add(v1);
         }
 
         public void Play()
@@ -124,6 +134,9 @@ namespace WorldOfZuul
                         break;
                     case "quit":
                         _continuePlaying = false;
+                        break;
+                    case "assign":
+                        AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
                         break;
                     case "feed":
                         food--;
@@ -210,26 +223,8 @@ namespace WorldOfZuul
             //PrintHelp();
 
         }
-
-        private static void PrintHelp()
-        {
-            Console.WriteLine("Here are available commands");
-            Console.WriteLine("help                                   Bring up this information");
-            Console.WriteLine("ls v                                   List out all villagers and their status");
-            Console.WriteLine("ls r                                   List out all rooms");
-            Console.WriteLine("ls j                                   List out all jobs");
-            Console.WriteLine("cd [ROOM NAME]                         Goes to room");
-            Console.WriteLine("feed -[VILLAGER ID] [AMOUNT/DAY]       Feeds villager and activates it");
-            Console.WriteLine("assign -[VILLAGER ID] [JOB NAME]       Assigns villager to a task");
-            Console.WriteLine("sleep                                  Skip the remaining moves");
-            Console.WriteLine("exit                                   Exit game");
-            Console.ReadKey();
-        }
-
         private static void RoomInfo(string shortDesc)
         {
-
-
             switch (shortDesc)
             {
                 case "Forest":
@@ -278,7 +273,10 @@ namespace WorldOfZuul
             switch (type)
             {
                 case 'v':
-                    Console.WriteLine("Villagers");
+                    foreach (var villager in _villagers)
+                    {
+                        Console.WriteLine($"{villager.Id} | {villager.Name}");
+                    }
                     break;
                 case 'j':
                     Console.WriteLine("Jobs");
@@ -293,6 +291,14 @@ namespace WorldOfZuul
                 default:
                     Console.WriteLine("Wrong command! Try 'help' to see syntax.");
                     break;
+            }
+        }
+
+        private void AssignVillager(int villagerId, int jobId)
+        {
+            foreach (var r in _rooms.Where(r => r is { Job: not null } && r.Job.Id  == jobId)) 
+            {
+                r?.Job?.AddVillager(_villagers[villagerId]);
             }
         }
     }

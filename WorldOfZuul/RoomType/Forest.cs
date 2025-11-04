@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorldOfZuul.Jobs;
 
 namespace WorldOfZuul.RoomType
 {
@@ -14,9 +15,8 @@ namespace WorldOfZuul.RoomType
         // Single Random instance to avoid creating new seeds on each call
         private static readonly Random rng = new();
 
-        public Forest(string shortDesc, string longDesc) : base(shortDesc, longDesc)
+        public Forest(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Lumberjack(1, 1))
         {
-
         }
 
         public override void EnterRoom()

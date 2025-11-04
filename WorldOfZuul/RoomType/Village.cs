@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorldOfZuul.Jobs;
 
 namespace WorldOfZuul.RoomType
 {
@@ -10,7 +11,7 @@ namespace WorldOfZuul.RoomType
     {
         int villigers { get; set; } = 20;
         int houses { get; set; } = 5;
-        public Village(string shortDesc, string longDesc) : base(shortDesc, longDesc)
+        public Village(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Unemployed())
         {
 
         }

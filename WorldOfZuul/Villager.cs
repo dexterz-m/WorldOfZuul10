@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace WorldOfZuul
 {
-    internal class Villager
+    public class Villager
     {
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+
+        public Villager(int id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
     }
 }
