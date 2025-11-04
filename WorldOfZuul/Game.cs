@@ -31,14 +31,13 @@ namespace WorldOfZuul
             Forest forest = new("Forest", "(Placeholder forest)");
             Village village = new("Village", "(Placeholder village)");
             Lake lake = new("Lake", "(Placeholder lake)");
-            // should be created when school is built
-            //School school = new("School", "(Placeholder school)"); 
+            School school = new("School", "(Placeholder school)"); 
 
             _rooms.Add(village);
             _rooms.Add(forest);
             _rooms.Add(farmlandMain);
             _rooms.Add(lake);
-            //_rooms.Add(school);
+            _rooms.Add(school);
             
             _currentRoom = _rooms[0];
         }
