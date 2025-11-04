@@ -182,7 +182,6 @@ namespace WorldOfZuul
                     _continuePlaying = false;
                     // end of the game
                 }
-
             }
 
             Console.WriteLine("Thank you for playing World of Zuul!");
@@ -191,11 +190,12 @@ namespace WorldOfZuul
         private void ChangeRoom(string? nameString)
         {
 
+            Console.Clear();
             int id = -1;
 
             foreach (Room rName in _rooms!)
             {
-                if (nameString == rName!.ShortDescription)
+                if (nameString?.ToLower() == rName!.ShortDescription.ToLower())
                 {
                     id = _rooms.IndexOf(rName);
                 }
