@@ -1,4 +1,5 @@
-﻿using WorldOfZuul.RoomType;
+﻿using System.Diagnostics;
+using WorldOfZuul.RoomType;
 
 namespace WorldOfZuul
 {
@@ -9,6 +10,22 @@ namespace WorldOfZuul
         private int _currentDay;
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
+
+        private int sustainability;
+
+        
+        // Food and farming variables
+        private int food;
+        private int grainseeds;
+        private int grains;
+        private int hunger; // This can be assigned as 100 in start as 100%, but everyday it reduces by 25-40%, so player have to feed villagers everyday.
+
+        // animals and forest variables 
+        private int animals;
+        private int trees;
+        private int wood;
+        private int saplings;
+
 
         // Global sustainability points defined in Game (static so accessible from Room)
         public static int SustainabilityPoints { get; set; } = 10;
@@ -24,16 +41,21 @@ namespace WorldOfZuul
 
             // Sustainability point tracker
 
-            int sustainability; // Later we cauculate default starting points, so it's possible for player to play.
+            sustainability = 50; // Later we cauculate default starting points, so it's possible for player to play.
 
-            // Food and farming related
-            int food;
-            int grainseeds;
-            int grains;
+            // Food and farming (Starting values should be discussed).
 
-            // animals and forest related 
-            int animals;
-            int trees;
+            food = 2;
+            grainseeds = 0;
+            grains = 0;
+            hunger = 50;
+
+
+            // animals and forest related (Starting values should be discussed).
+            animals = 5;
+            trees = 20;
+            saplings = 0;
+            wood = 0;
 
         }
 
@@ -97,24 +119,34 @@ namespace WorldOfZuul
                         break;
                     case "sleep":
                         _currentDay++;
+                        hunger -= 35;
                         Console.WriteLine($"Day advanced to {_currentDay}.");
                         break;
                     case "quit":
                         _continuePlaying = false;
                         break;
+                    case "feed":
+                        food--;
+                        hunger += 50;  //Player can feed villagers 2 times a day to gain up to 100%.
+                        break;
                     case "hunt":
-                        // food++;
-                        // animals--;
-                        // sustainability--;
+                        food++;
+                        animals--;
+                        sustainability -= 5;
                         break;
                     case "farm":
-                        // grains++;
-                        // seeds--;
+                        grains++;
+                        grainseeds--;
                         break;
                     case "chop":
-                        // wood++;
-                        // trees--;
-                        //sustainability--
+                        wood++;
+                        saplings += 2;
+                        trees--;
+                        sustainability -= 5;
+                        break;
+                    case "plant":
+                        saplings--;
+                        sustainability += 10;
                         break;
                     default:
                         // Not a global command: pass it to the current room to handle
