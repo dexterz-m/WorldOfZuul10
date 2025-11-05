@@ -38,6 +38,29 @@ namespace WorldOfZuul
             CreateRooms();
             _villagers = new List<Villager>();
             CreateVillagers();
+
+            // Deafult values for trackable variables.
+            // We have to discuss with what values does the player start
+            // Now they are just defined.
+
+            // Sustainability point tracker
+
+            sustainability = 50; // Later we cauculate default starting points, so it's possible for player to play.
+
+            // Food and farming (Starting values should be discussed).
+
+            food = 2;
+            grainseeds = 5;
+            grains = 0;
+            hunger = 50;
+
+
+            // animals and forest related (Starting values should be discussed).
+            animals = 5;
+            trees = 20;
+            saplings = 0;
+            wood = 0;
+
         }
 
         private void CreateRooms()
@@ -47,7 +70,7 @@ namespace WorldOfZuul
             Forest forest = new("Forest", "(Placeholder forest)");
             Village village = new("Village", "(Placeholder village)");
             Lake lake = new("Lake", "(Placeholder lake)");
-            School school = new("School", "(Placeholder school)"); 
+            School school = new("School", "(Placeholder school)");
 
             _rooms.Add(village);
             _rooms.Add(forest);
