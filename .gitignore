@@ -103,3 +103,5 @@ $RECYCLE.BIN/
 _NCrunch*
 
 .idea/
+.vs/
+.DS_Store
