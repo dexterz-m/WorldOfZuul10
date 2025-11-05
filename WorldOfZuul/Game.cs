@@ -1,3 +1,4 @@
+using WorldOfZuul.Jobs;
 using WorldOfZuul.RoomType;
 
 namespace WorldOfZuul
@@ -13,25 +14,13 @@ namespace WorldOfZuul
         //private const int MaxTurnPerDay = 10;
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
+        public static Resources resources;
 
         // Advisor NPC
         private readonly Advisor advisor = new();
 
         //Sustainability variable
         private int _sustainability;
-
-        // Food and farming variables
-        private int _food;
-        private int _grainSeeds;
-        private int _grains;
-        private int _hunger; // This can be assigned as 100 in start as 100%, but everyday it reduces by 25-40%, so player have to feed villagers everyday.
-
-        // animals and forest variables 
-        private int _animals;
-        private int _trees;
-        private int _wood;
-        private int _saplings;
-
 
         // Global sustainability points defined in Game (static so accessible from Room)
         public static int SustainabilityPoints { get; set; } = 10;
@@ -42,28 +31,7 @@ namespace WorldOfZuul
             CreateRooms();
             _villagers = new List<Villager>();
             CreateVillagers();
-
-            // Deafult values for trackable variables.
-            // We have to discuss with what values does the player start
-            // Now they are just defined.
-
-            // Sustainability point tracker
-
-            _sustainability = 50; // Later we cauculate default starting points, so it's possible for player to play.
-
-            // Food and farming (Starting values should be discussed).
-
-            _food = 2;
-            _grainSeeds = 5;
-            _grains = 0;
-            _hunger = 50;
-
-
-            // animals and forest related (Starting values should be discussed).
-            _animals = 5;
-            _trees = 20;
-            _saplings = 0;
-            _wood = 0;
+            resources = new Resources();
         }
 
         private void CreateRooms()
@@ -87,7 +55,8 @@ namespace WorldOfZuul
 
         private void CreateVillagers()
         {
-            
+            var job = _rooms[0].Job;
+            if (job == null) return;
             var v1 = new Villager(0, "asd");
             _villagers.Add(v1);
         }
@@ -133,7 +102,7 @@ namespace WorldOfZuul
                         break;
                     case "sleep":
                         _currentDay++;
-                        _hunger -= 35;
+                        resources.Hunger = -35;
                         Console.WriteLine($"Day advanced to {_currentDay}.");
                         break;
                     case "quit":
@@ -143,34 +112,34 @@ namespace WorldOfZuul
                         AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
                         break;
                     case "feed":
-                        _food--;
-                        _hunger += 50;  //Player can feed villagers 2 times a day to gain up to 100%.
+                        resources.Food = - 1;
+                        resources.Hunger = 50;
                         break;
                     case "hunt":
-                        _food++;
-                        _animals--;
+                        resources.Food = 1;
+                        resources.Animals = -1;
                         _sustainability -= 5;
                         break;
                     case "farm":
-                        _grainSeeds--;
+                        resources.GrainSeeds = - 1;
                         break;
                     case "harvest":
-                        _grains++;
+                        resources.Grains = 1;
                         _sustainability -= 5;
                         break;
                     case "chop":
-                        _wood++;
-                        _saplings += 2;
-                        _trees--;
+                        resources.Wood = 1;
+                        resources.Saplings = 2;
+                        resources.Trees = -1;
                         _sustainability -= 5;
                         break;
                     case "plant":
-                        _saplings--;
+                        resources.Saplings = -1;
                         _sustainability += 10;
                         break;
                     case "cook":
-                        _grains -= 2;
-                        _food++;
+                        resources.Grains = -1;
+                        resources.Food = 1;
                         break;
                     case "talk":
                         advisor.Talk();
@@ -289,11 +258,20 @@ namespace WorldOfZuul
                     Console.WriteLine("Jobs");
                     break;
                 case 'r':
-
                     foreach (Room roomName in _rooms!)
                     {
                         Console.WriteLine(roomName!.ShortDescription);
                     }
+                    break;
+                case 'i':
+                    Console.WriteLine($"Food : {resources.Food}");
+                    Console.WriteLine($"Hunger : {resources.Hunger}");
+                    Console.WriteLine($"Saplings : {resources.Saplings}");
+                    Console.WriteLine($"Animals : {resources.Animals}");
+                    Console.WriteLine($"Grains : {resources.Grains}");
+                    Console.WriteLine($"GrainSeeds : {resources.GrainSeeds}");
+                    Console.WriteLine($"Trees : {resources.Trees}");
+                    Console.WriteLine($"Wood : {resources.Wood}");
                     break;
                 default:
                     Console.WriteLine("Wrong command! Try 'help' to see syntax.");
