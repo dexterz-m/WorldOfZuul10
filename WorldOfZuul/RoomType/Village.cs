@@ -4,8 +4,8 @@ namespace WorldOfZuul.RoomType
 {
     public class Village : Room
     {
-        int villigers { get; set; } = 20;
-        int houses { get; set; } = 5;
+        private int Villagers { get; set; } = 20;
+        private int Houses { get; set; } = 5;
         public Village(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Unemployed())
         {
 
@@ -17,8 +17,8 @@ namespace WorldOfZuul.RoomType
 
             // Display current state of the village
             Console.WriteLine("Below are the current stats:");
-            Console.WriteLine($"Villagers: {villigers}");
-            Console.WriteLine($"Houses: {houses}");
+            Console.WriteLine($"Villagers: {Villagers}");
+            Console.WriteLine($"Houses: {Houses}");
             Console.WriteLine();
 
             // List available actions for the player
@@ -40,7 +40,7 @@ namespace WorldOfZuul.RoomType
             switch (command.Name)
             {               
                 case "feed":
-                    feed(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
+                    Feed(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
                     break;
                 case "assign":
                     Assign(command.SecondWord, command.ThirdWord);
@@ -51,7 +51,7 @@ namespace WorldOfZuul.RoomType
             }
         }
 
-        void feed(int villagerID, int amount)
+        void Feed(int villagerId, int amount)
         {
 
         }

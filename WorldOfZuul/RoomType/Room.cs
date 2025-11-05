@@ -12,8 +12,8 @@ namespace WorldOfZuul.RoomType
         // SustainabilityPoints proxy to Game.SustainabilityPoints
         public int SustainabilityPoints
         {
-            get { return Game.SustainabilityPoints; }
-            set { Game.SustainabilityPoints = value; }
+            get => Game.SustainabilityPoints;
+            set => Game.SustainabilityPoints = value;
         }
 
         public Room(string shortDesc, string longDesc)

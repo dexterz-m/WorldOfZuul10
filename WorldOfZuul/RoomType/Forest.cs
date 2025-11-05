@@ -4,11 +4,11 @@ namespace WorldOfZuul.RoomType
 {
     public class Forest : Room
     {
-        int trees { get; set; } = 20; // one tree cut reduces SustainabilityPoints by 2
-        int animals { get; set; } = 10; // one animal lost reduces SustainabilityPoints by 1
+        int Trees { get; set; } = 20; // one tree cut reduces SustainabilityPoints by 2
+        int Animals { get; set; } = 10; // one animal lost reduces SustainabilityPoints by 1
 
         // Single Random instance to avoid creating new seeds on each call
-        private static readonly Random rng = new();
+        private static readonly Random Rng = new();
 
         public Forest(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Lumberjack(1, 1))
         {
@@ -19,8 +19,8 @@ namespace WorldOfZuul.RoomType
            
             // Display current state of the forest
             Console.WriteLine("Below are the current stats:");
-            Console.WriteLine($"Trees: {trees}");
-            Console.WriteLine($"Animals: {animals}");
+            Console.WriteLine($"Trees: {Trees}");
+            Console.WriteLine($"Animals: {Animals}");
             Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
             Console.WriteLine();
 
@@ -60,31 +60,31 @@ namespace WorldOfZuul.RoomType
         private void CutTree()
         {
             // If there are no trees left, inform the player
-            if (trees <= 0)
+            if (Trees <= 0)
             {
                 Console.WriteLine("No trees left to cut.");
                 return;
             }
 
             // Cut one tree
-            trees--;
+            Trees--;
 
             // Cutting a tree reduces sustainability
             SustainabilityPoints -= 2;
 
-            Console.WriteLine($"You cut a tree. Trees remaining: {trees}.");
+            Console.WriteLine($"You cut a tree. Trees remaining: {Trees}.");
 
             // If there are animals, randomly 1 to 3 disappear (but not more than current number of animals)
-            if (animals > 0)
+            if (Animals > 0)
             {
-                int animalsLost = rng.Next(1, 4); // picks 1, 2 or 3
-                animalsLost = Math.Min(animalsLost, animals); // don't remove more than exist
-                animals -= animalsLost;
+                int animalsLost = Rng.Next(1, 4); // picks 1, 2 or 3
+                animalsLost = Math.Min(animalsLost, Animals); // don't remove more than exist
+                Animals -= animalsLost;
 
                 // Each lost animal reduces SustainabilityPoints by 1 (weight can be adjusted)
                 SustainabilityPoints -= animalsLost;
 
-                Console.WriteLine($"{animalsLost} animals left the forest. Animals remaining: {animals}.");
+                Console.WriteLine($"{animalsLost} animals left the forest. Animals remaining: {Animals}.");
             }
 
             Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
@@ -97,27 +97,27 @@ namespace WorldOfZuul.RoomType
 
         private void PlantTree()
         {
-            trees++;
+            Trees++;
             SustainabilityPoints += 2;
-            Console.WriteLine($"You planted a tree. Trees remaining: {trees}.");
+            Console.WriteLine($"You planted a tree. Trees remaining: {Trees}.");
         }
 
         private void KillAnimal()
         {
             // If there are no animals left, inform the player
-            if (animals <= 0)
+            if (Animals <= 0)
             {
                 Console.WriteLine("No animals left to kill.");
                 return;
             }
 
             // Kill one animal
-            animals--;
+            Animals--;
 
             // Killing an animal reduces sustainability
             SustainabilityPoints--;
 
-            Console.WriteLine($"You killed an animal. Animals remaining: {animals}.");
+            Console.WriteLine($"You killed an animal. Animals remaining: {Animals}.");
             Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
 
             // Prevent SustainabilityPoints from going negative

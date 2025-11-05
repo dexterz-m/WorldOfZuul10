@@ -1,3 +1,5 @@
+using WorldOfZuul.RoomType;
+
 namespace WorldOfZuul
 {
     public class Game
@@ -6,25 +8,26 @@ namespace WorldOfZuul
         private readonly List<Villager> _villagers;
         private Room? _currentRoom;
         private int _currentDay;
-        private int _currentTurn = 0;
-        private const int MaxTurnPerDay = 10;
+        //TODO: implement turn system
+        //private int _currentTurn = 0;
+        //private const int MaxTurnPerDay = 10;
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
 
         //Sustainability variable
-        private int sustainability;
+        private int _sustainability;
 
         // Food and farming variables
-        private int food;
-        private int grainseeds;
-        private int grains;
-        private int hunger; // This can be assigned as 100 in start as 100%, but everyday it reduces by 25-40%, so player have to feed villagers everyday.
+        private int _food;
+        private int _grainSeeds;
+        private int _grains;
+        private int _hunger; // This can be assigned as 100 in start as 100%, but everyday it reduces by 25-40%, so player have to feed villagers everyday.
 
         // animals and forest variables 
-        private int animals;
-        private int trees;
-        private int wood;
-        private int saplings;
+        private int _animals;
+        private int _trees;
+        private int _wood;
+        private int _saplings;
 
 
         // Global sustainability points defined in Game (static so accessible from Room)
@@ -43,41 +46,21 @@ namespace WorldOfZuul
 
             // Sustainability point tracker
 
-            sustainability = 50; // Later we cauculate default starting points, so it's possible for player to play.
+            _sustainability = 50; // Later we cauculate default starting points, so it's possible for player to play.
 
             // Food and farming (Starting values should be discussed).
 
-            food = 2;
-            grainseeds = 5;
-            grains = 0;
-            hunger = 50;
+            _food = 2;
+            _grainSeeds = 5;
+            _grains = 0;
+            _hunger = 50;
 
 
             // animals and forest related (Starting values should be discussed).
-            animals = 5;
-            trees = 20;
-            saplings = 0;
-            wood = 0;
-
-
-
-            // Deafult values for trackable variables.
-            // We have to discuss with what values does the player start
-            // Now they are just defined.
-
-            // Sustainability point tracker
-
-            int sustainability; // Later we cauculate default starting points, so it's possible for player to play.
-
-            // Food and farming related
-            int food;
-            int grainseeds;
-            int grains;
-
-            // animals and forest related 
-            int animals;
-            int trees;
-
+            _animals = 5;
+            _trees = 20;
+            _saplings = 0;
+            _wood = 0;
         }
 
         private void CreateRooms()
@@ -144,15 +127,9 @@ namespace WorldOfZuul
                     case "cd":
                         ChangeRoom(command.SecondWord);
                         break;
-                    case "feed":
-                        Feed();
-                        break;
-                    case "assign":
-                        Assign(command.SecondWord, command.ThirdWord);
-                        break;
                     case "sleep":
                         _currentDay++;
-                        hunger -= 35;
+                        _hunger -= 35;
                         Console.WriteLine($"Day advanced to {_currentDay}.");
                         break;
                     case "quit":
@@ -162,34 +139,34 @@ namespace WorldOfZuul
                         AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
                         break;
                     case "feed":
-                        food--;
-                        hunger += 50;  //Player can feed villagers 2 times a day to gain up to 100%.
+                        _food--;
+                        _hunger += 50;  //Player can feed villagers 2 times a day to gain up to 100%.
                         break;
                     case "hunt":
-                        food++;
-                        animals--;
-                        sustainability -= 5;
+                        _food++;
+                        _animals--;
+                        _sustainability -= 5;
                         break;
                     case "farm":
-                        grainseeds--;
+                        _grainSeeds--;
                         break;
                     case "harvest":
-                        grains++;
-                        sustainability -= 5;
+                        _grains++;
+                        _sustainability -= 5;
                         break;
                     case "chop":
-                        wood++;
-                        saplings += 2;
-                        trees--;
-                        sustainability -= 5;
+                        _wood++;
+                        _saplings += 2;
+                        _trees--;
+                        _sustainability -= 5;
                         break;
                     case "plant":
-                        saplings--;
-                        sustainability += 10;
+                        _saplings--;
+                        _sustainability += 10;
                         break;
                     case "cook":
-                        grains -= 2;
-                        food++;
+                        _grains -= 2;
+                        _food++;
                         break;
                     default:
                         // Not a global command: pass it to the current room to handle
@@ -208,13 +185,6 @@ namespace WorldOfZuul
             }
 
             Console.WriteLine("Thank you for playing World of Zuul!");
-        }
-
-        private void Feed()
-        {
-            //TODO: Add daily food consumption to a villager
-            //Implement after Villagers and Resource 
-            throw new NotImplementedException();
         }
 
         private void ChangeRoom(string? nameString)

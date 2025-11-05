@@ -2,7 +2,7 @@
 {
     public class Lake : Room
     {
-        int fishes {  get; set; } = 10;
+        int Fishes {  get; set; } = 10;
 
         public Lake(string shortDesc, string longDesc) : base(shortDesc, longDesc)
         {
@@ -12,7 +12,7 @@
         public override void EnterRoom()
         {
             Console.WriteLine("You have arrived at the lake. Below are the current stats:");
-            Console.WriteLine($"Fishes: {fishes}");
+            Console.WriteLine($"Fishes: {Fishes}");
             Console.WriteLine();
 
             Console.WriteLine("Available actions:");
