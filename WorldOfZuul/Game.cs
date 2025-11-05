@@ -14,6 +14,9 @@ namespace WorldOfZuul
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
 
+        // Advisor NPC
+        private readonly Advisor advisor = new();
+
         //Sustainability variable
         private int _sustainability;
 
@@ -71,6 +74,7 @@ namespace WorldOfZuul
             Village village = new("Village", "(Placeholder village)");
             Lake lake = new("Lake", "(Placeholder lake)");
             School school = new("School", "(Placeholder school)");
+
 
             _rooms.Add(village);
             _rooms.Add(forest);
@@ -167,6 +171,9 @@ namespace WorldOfZuul
                     case "cook":
                         _grains -= 2;
                         _food++;
+                        break;
+                    case "talk":
+                        advisor.Talk();
                         break;
                     default:
                         // Not a global command: pass it to the current room to handle
