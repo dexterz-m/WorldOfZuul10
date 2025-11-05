@@ -9,10 +9,10 @@ namespace WorldOfZuul
     //NPC implementation
     public class Advisor
     {
-        private readonly string nickname = "Leafy Guide";
-        private bool introduced = false;
+        private readonly string _nickname = "Leafy Guide";
+        private bool _introduced = false;
 
-        private readonly List<string> tips = new()
+        private readonly List<string> _tips = new()
         {
             "Assign villagers to plant trees regularly; it keeps your village thriving.",
             "Balance fishing and farming; overfishing might deplete resources.",
@@ -22,7 +22,7 @@ namespace WorldOfZuul
             "Check the balance between animal population and hunting to avoid depletion."
         };
 
-        private readonly List<string> stats = new()
+        private readonly List<string> _stats = new()
         {
             "Around 1/3 of all food produced globally is wasted each year.",
             "Every year, we lose about 10 million hectares of forests worldwide.",
@@ -30,7 +30,7 @@ namespace WorldOfZuul
             "Globally, water usage in agriculture is expected to increase by 20% by 2050."
         };
 
-        private readonly List<string> challenges = new()
+        private readonly List<string> _challenges = new()
         {
             "Visit all rooms today without using sleep.",
             "Assign a villager to plant at least one tree.",
@@ -38,7 +38,7 @@ namespace WorldOfZuul
             "Explore the lake and the forest in one turn."
         };
 
-        private readonly List<string> jokes = new()
+        private readonly List<string> _jokes = new()
         {
             "Why did the tree go to school? Because it wanted to be a little wiser!",
             "Why don’t fish use smartphones? They’re afraid of being caught in the net!",
@@ -47,27 +47,27 @@ namespace WorldOfZuul
             "Why did the forest apply for a job? It wanted to branch out!"
         };
 
-        private int tipIndex = 0;
-        private int statsIndex = 0;
-        private int challengeIndex = 0;
-        private int jokeIndex = 0;
+        private int _tipIndex;
+        private int _statsIndex = 0;
+        private int _challengeIndex = 0;
+        private int _jokeIndex = 0;
 
         public void Talk()
         {
-            if (!introduced)
+            if (!_introduced)
             {
-                Console.WriteLine($"Hello there! I’m the village guide, but you can call me '{nickname}'.");
+                Console.WriteLine($"Hello there! I’m the village guide, but you can call me '{_nickname}'.");
                 Console.WriteLine("My role is to help you make smart decisions and guide you through this village.");
-                introduced = true;
+                _introduced = true;
             }
 
             Console.WriteLine("Type 'help' to see what I can do while we chat!");
 
-            bool chatting = true;
+            var chatting = true;
             while (chatting)
             {
                 Console.Write("> ");
-                string? input = Console.ReadLine()?.ToLower();
+                var input = Console.ReadLine()?.ToLower();
 
                 switch (input)
                 {
@@ -81,23 +81,23 @@ namespace WorldOfZuul
                         break;
 
                     case "stats":
-                        Console.WriteLine(stats[statsIndex]);
-                        statsIndex = (statsIndex + 1) % stats.Count;
+                        Console.WriteLine(_stats[_statsIndex]);
+                        _statsIndex = (_statsIndex + 1) % _stats.Count;
                         break;
 
                     case "tip":
-                        Console.WriteLine(tips[tipIndex]);
-                        tipIndex = (tipIndex + 1) % tips.Count;
+                        Console.WriteLine(_tips[_tipIndex]);
+                        _tipIndex = (_tipIndex + 1) % _tips.Count;
                         break;
 
                     case "challenge":
-                        Console.WriteLine(challenges[challengeIndex]);
-                        challengeIndex = (challengeIndex + 1) % challenges.Count;
+                        Console.WriteLine(_challenges[_challengeIndex]);
+                        _challengeIndex = (_challengeIndex + 1) % _challenges.Count;
                         break;
 
                     case "joke":
-                        Console.WriteLine(jokes[jokeIndex]);
-                        jokeIndex = (jokeIndex + 1) % jokes.Count;
+                        Console.WriteLine(_jokes[_jokeIndex]);
+                        _jokeIndex = (_jokeIndex + 1) % _jokes.Count;
                         break;
 
                     case "exit":

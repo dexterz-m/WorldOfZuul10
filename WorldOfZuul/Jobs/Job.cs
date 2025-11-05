@@ -22,7 +22,7 @@ public class Job
  /*
      * 0 - unemployed
      * 1 - lumberjack
-     * 2 - farmer
+     * 2 - hunter
  */
  public string Name { get; }
  public string Description { get; }
@@ -38,7 +38,7 @@ public class Job
     /// </summary>
     /// <param name="id">
     /// Job identifier (see remarks for conventions).
-    /// 0 = unemployed, 1 = lumberjack, 2 = farmer.
+    /// 0 = unemployed, 1 = lumberjack, 2 = hunter.
     /// </param>
     /// <param name="name">Job name.</param>
     /// <param name="description">Job description.</param>

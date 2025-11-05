@@ -46,7 +46,12 @@ public class Lumberjack : Job
     /// </remarks>
     public override void Work()
     {
-        Game.resources.Wood = _resourceGainedPerTurn;
-        
+        Game.Resources.Wood = _resourceGainedPerTurn;
+        foreach (var room in Game.Rooms.Where(room => room is { ShortDescription: "Forest" }))
+        {
+            var forest = room as RoomType.Forest;
+            var tmp = this.Villagers?.Count ?? 0;
+            forest?.CutTree(tmp * _resourceGainedPerTurn);
+        }
     }
 }
