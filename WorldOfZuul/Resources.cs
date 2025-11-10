@@ -53,7 +53,7 @@ public class Resources
 
     // Food and farming variables
     private int _food = 10;
-    private int _grainSeeds = 0;
+    private int _grainSeeds = 2;
     private int _grains = 0;
     private int _hunger = 0; // This can be assigned as 100 in start as 100%, but everyday it reduces by 25-40%, so player have to feed villagers everyday.
 

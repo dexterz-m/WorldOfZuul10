@@ -1,4 +1,4 @@
-using WorldOfZuul.Jobs;
+﻿using WorldOfZuul.Jobs;
 using WorldOfZuul.RoomType;
 
 namespace WorldOfZuul
@@ -223,9 +223,9 @@ namespace WorldOfZuul
                     Console.WriteLine("");
                     break;
                 case "Lake":
-                    Console.WriteLine("Fishes: 7");
                     Console.WriteLine("");
-                    Console.WriteLine("catch Fish");
+                    Console.WriteLine("Catch Fish");
+                    Console.WriteLine("Feed Fish");
                     Console.WriteLine("");
                     break;
                 case "School":
