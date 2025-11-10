@@ -42,7 +42,7 @@ public class Hunter : Job
     /// Performs hunter work for the current turn for all assigned villagers.
     /// </summary>
     /// <remarks>
-    /// Adds wood to the shared Resources (Resources.Food) equal to _resourceGainedPerTurn * numberOfVillagers and subtracts animals from Forest.Animals equal to _animalsKilledPerTurn * numberOfVillagers; do not modify villagers' resources.
+    /// Adds food to the shared Resources (Resources.Food) equal to _resourceGainedPerTurn * numberOfVillagers and subtracts animals from Forest.Animals equal to _animalsKilledPerTurn * numberOfVillagers; do not modify villagers' resources.
     /// </remarks>
     public override void Work()
     {
