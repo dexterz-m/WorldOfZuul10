@@ -57,22 +57,20 @@ namespace WorldOfZuul.RoomType
 
 
 
-        private void CutTree()
+        public void CutTree(int amount = 1)
         {
-            // If there are no trees left, inform the player
-            if (Trees <= 0)
+            // If there are fewer trees left, inform the player
+            if (Trees > amount)
             {
                 Console.WriteLine("No trees left to cut.");
                 return;
             }
 
-            // Cut one tree
-            Trees--;
+            // Cut the amount of trees
+            Trees -= amount;
 
             // Cutting a tree reduces sustainability
             SustainabilityPoints -= 2;
-
-            Console.WriteLine($"You cut a tree. Trees remaining: {Trees}.");
 
             // If there are animals, randomly 1 to 3 disappear (but not more than current number of animals)
             if (Animals > 0)
@@ -83,13 +81,7 @@ namespace WorldOfZuul.RoomType
 
                 // Each lost animal reduces SustainabilityPoints by 1 (weight can be adjusted)
                 SustainabilityPoints -= animalsLost;
-
-                Console.WriteLine($"{animalsLost} animals left the forest. Animals remaining: {Animals}.");
             }
-
-            Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
-
-            
 
             // Hint to player about replanting
             Console.WriteLine("Consider planting a tree to maintain ecosystem balance.");
@@ -102,23 +94,20 @@ namespace WorldOfZuul.RoomType
             Console.WriteLine($"You planted a tree. Trees remaining: {Trees}.");
         }
 
-        private void KillAnimal()
+        public void KillAnimal(int amount = 1)
         {
             // If there are no animals left, inform the player
-            if (Animals <= 0)
+            if (Animals > amount)
             {
                 Console.WriteLine("No animals left to kill.");
                 return;
             }
 
             // Kill one animal
-            Animals--;
+            Animals -= amount;
 
             // Killing an animal reduces sustainability
             SustainabilityPoints--;
-
-            Console.WriteLine($"You killed an animal. Animals remaining: {Animals}.");
-            Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
 
             // Prevent SustainabilityPoints from going negative
         }

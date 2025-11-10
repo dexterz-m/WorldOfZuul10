@@ -7,25 +7,32 @@ namespace WorldOfZuul.RoomType
         public string ShortDescription { get; private set; }
         public string LongDescription { get; private set; }
         public Dictionary<string, Room> Exits { get; private set; } = new();
-        public Job? Job { get; private set; }
+        public List<Job?> Jobs { get; private set; } = new List<Job?>();
 
         // SustainabilityPoints proxy to Game.SustainabilityPoints
-        public int SustainabilityPoints
+        protected static int SustainabilityPoints
         {
             get => Game.SustainabilityPoints;
             set => Game.SustainabilityPoints = value;
         }
-
-        public Room(string shortDesc, string longDesc)
+        
+        protected Room(string shortDesc, string longDesc)
         {
             ShortDescription = shortDesc;
             LongDescription = longDesc;
         }
-        public Room(string shortDesc, string longDesc, Job job)
+
+        protected Room(string shortDesc, string longDesc, Job job)
         {
             ShortDescription = shortDesc;
             LongDescription = longDesc;
-            this.Job = job;
+            this.Jobs.Add(job);
+        }
+        public Room(string shortDesc, string longDesc, List<Job?> jobs)
+        {
+            ShortDescription = shortDesc;
+            LongDescription = longDesc;
+            this.Jobs = jobs;
         }
         
 

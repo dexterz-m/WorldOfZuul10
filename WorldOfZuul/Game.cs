@@ -1,69 +1,34 @@
+using WorldOfZuul.Jobs;
 using WorldOfZuul.RoomType;
 
 namespace WorldOfZuul
 {
     public class Game
     {
-        private readonly List<Room?> _rooms;
-        private readonly List<Villager> _villagers;
+        public static readonly List<Room?> Rooms  = new List<Room?>();
+        private static readonly List<Villager>? Villagers = new List<Villager>();
+        public static readonly Resources Resources= new Resources();
+        public static int SustainabilityPoints { get; set; } = 10;
+        public static int CurrentTurn {get; set;}
+        
         private Room? _currentRoom;
         private int _currentDay;
-        //TODO: implement turn system
-        //private int _currentTurn = 0;
-        //private const int MaxTurnPerDay = 10;
+        private const int MaxTurnPerDay = 10;
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
 
         // Advisor NPC
-        private readonly Advisor advisor = new();
+        private readonly Advisor _advisor = new();
 
         //Sustainability variable
         private int _sustainability;
 
-        // Food and farming variables
-        private int _food;
-        private int _grainSeeds;
-        private int _grains;
-        private int _hunger; // This can be assigned as 100 in start as 100%, but everyday it reduces by 25-40%, so player have to feed villagers everyday.
-
-        // animals and forest variables 
-        private int _animals;
-        private int _trees;
-        private int _wood;
-        private int _saplings;
-
-
         // Global sustainability points defined in Game (static so accessible from Room)
-        public static int SustainabilityPoints { get; set; } = 10;
 
         public Game()
         {
-            _rooms = new List<Room?>();
             CreateRooms();
-            _villagers = new List<Villager>();
             CreateVillagers();
-
-            // Deafult values for trackable variables.
-            // We have to discuss with what values does the player start
-            // Now they are just defined.
-
-            // Sustainability point tracker
-
-            _sustainability = 50; // Later we cauculate default starting points, so it's possible for player to play.
-
-            // Food and farming (Starting values should be discussed).
-
-            _food = 2;
-            _grainSeeds = 5;
-            _grains = 0;
-            _hunger = 50;
-
-
-            // animals and forest related (Starting values should be discussed).
-            _animals = 5;
-            _trees = 20;
-            _saplings = 0;
-            _wood = 0;
         }
 
         private void CreateRooms()
@@ -76,20 +41,21 @@ namespace WorldOfZuul
             School school = new("School", "(Placeholder school)");
 
 
-            _rooms.Add(village);
-            _rooms.Add(forest);
-            _rooms.Add(farmlandMain);
-            _rooms.Add(lake);
-            _rooms.Add(school);
+            Rooms.Add(village);
+            Rooms.Add(forest);
+            Rooms.Add(farmlandMain);
+            Rooms.Add(lake);
+            Rooms.Add(school);
             
-            _currentRoom = _rooms[0];
+            _currentRoom = Rooms[0];
         }
 
         private void CreateVillagers()
         {
-            
+            var job = Rooms[0]?.Jobs;
+            if (job == null) return;
             var v1 = new Villager(0, "asd");
-            _villagers.Add(v1);
+            Villagers?.Add(v1);
         }
 
         public void Play()
@@ -102,92 +68,98 @@ namespace WorldOfZuul
 
             while (_continuePlaying && _currentDay <= MaxDay)
             {
-                Console.WriteLine(_currentRoom?.ShortDescription);
-                RoomInfo(_currentRoom!.ShortDescription);
-                Console.Write("> ");
-
-                string? input = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(input))
+                CurrentTurn = 0;
+                while (_continuePlaying && CurrentTurn <= MaxTurnPerDay)
                 {
-                    Console.WriteLine("Please enter a command.");
-                    continue;
-                }
+                    Console.WriteLine(_currentRoom?.ShortDescription);
+                    RoomInfo(_currentRoom!.ShortDescription);
+                    Console.Write("> ");
 
-                Command? command = parser.GetCommand(input);
+                    var input = Console.ReadLine();
 
-                if (command == null)
-                {
-                    Console.WriteLine("I don't know that command.");
-                    continue;
-                }
+                    if (string.IsNullOrEmpty(input))
+                    {
+                        Console.WriteLine("Please enter a command.");
+                        continue;
+                    }
 
-                // Handle global commands here so they work from any room
-                switch (command.Name)
-                {
-                    case "ls":
-                        List(command.SecondWord == null ? null : Convert.ToChar(command.SecondWord));
-                        break;
-                    case "cd":
-                        ChangeRoom(command.SecondWord);
-                        break;
-                    case "sleep":
-                        _currentDay++;
-                        _hunger -= 35;
-                        Console.WriteLine($"Day advanced to {_currentDay}.");
-                        break;
-                    case "quit":
+                    var command = parser.GetCommand(input);
+
+                    if (command == null)
+                    {
+                        Console.WriteLine("I don't know that command.");
+                        continue;
+                    }
+
+                    // Handle global commands here so they work from any room
+                    switch (command.Name)
+                    {
+                        case "ls":
+                            List(command.SecondWord == null ? null : Convert.ToChar(command.SecondWord));
+                            break;
+                        case "cd":
+                            ChangeRoom(command.SecondWord);
+                            break;
+                        case "sleep":
+                            _currentDay++;
+                            Resources.Hunger = -35;
+                            Console.WriteLine($"Day advanced to {_currentDay}.");
+                            break;
+                        case "quit":
+                            _continuePlaying = false;
+                            break;
+                        case "assign":
+                            AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
+                            CurrentTurn++;
+                            break;
+                        case "feed":
+                            Resources.Food = - 1;
+                            Resources.Hunger = 50;
+                            CurrentTurn++;
+                            break;
+                        case "hunt":
+                            Resources.Food = 1;
+                            Resources.Animals = -1;
+                            _sustainability -= 5;
+                            break;
+                        case "farm":
+                            Resources.GrainSeeds = - 1;
+                            break;
+                        case "harvest":
+                            Resources.Grains = 1;
+                            _sustainability -= 5;
+                            break;
+                        case "chop":
+                            Resources.Wood = 1;
+                            Resources.Saplings = 2;
+                            Resources.Trees = -1;
+                            _sustainability -= 5;
+                            break;
+                        case "plant":
+                            Resources.Saplings = -1;
+                            _sustainability += 10;
+                            break;
+                        case "cook":
+                            Resources.Grains = -1;
+                            Resources.Food = 1;
+                            break;
+                        case "talk":
+                            _advisor.Talk();
+                            break;
+                        default:
+                            // Not a global command: pass it to the current room to handle
+                            _currentRoom?.CommandList(command);
+                            break;
+                    }
+
+
+                    // Prevent SustainabilityPoints from going negative
+                    if (SustainabilityPoints < 0)
+                    {
+                        Console.WriteLine($"You lost");
                         _continuePlaying = false;
-                        break;
-                    case "assign":
-                        AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
-                        break;
-                    case "feed":
-                        _food--;
-                        _hunger += 50;  //Player can feed villagers 2 times a day to gain up to 100%.
-                        break;
-                    case "hunt":
-                        _food++;
-                        _animals--;
-                        _sustainability -= 5;
-                        break;
-                    case "farm":
-                        _grainSeeds--;
-                        break;
-                    case "harvest":
-                        _grains++;
-                        _sustainability -= 5;
-                        break;
-                    case "chop":
-                        _wood++;
-                        _saplings += 2;
-                        _trees--;
-                        _sustainability -= 5;
-                        break;
-                    case "plant":
-                        _saplings--;
-                        _sustainability += 10;
-                        break;
-                    case "cook":
-                        _grains -= 2;
-                        _food++;
-                        break;
-                    case "talk":
-                        advisor.Talk();
-                        break;
-                    default:
-                        // Not a global command: pass it to the current room to handle
-                        _currentRoom?.CommandList(command);
-                        break;
-                }
-
-
-                // Prevent SustainabilityPoints from going negative
-                if (SustainabilityPoints < 0)
-                {
-                    Console.WriteLine($"You lost");
-                    _continuePlaying = false;
-                    // end of the game
+                        // end of the game
+                    }
                 }
             }
 
@@ -196,21 +168,20 @@ namespace WorldOfZuul
 
         private void ChangeRoom(string? nameString)
         {
-
             Console.Clear();
             int id = -1;
             
-            foreach (Room rName in _rooms!)
+            foreach (Room rName in Rooms!)
             {
                 if (nameString?.ToLower() == rName!.ShortDescription.ToLower())
                 {
-                    id = _rooms.IndexOf(rName);
+                    id = Rooms.IndexOf(rName);
                 }
             }
 
-            if (id != -1 && id < _rooms.Count)
+            if (id != -1 && id < Rooms.Count)
             {
-                _currentRoom = _rooms[id];
+                _currentRoom = Rooms[id];
                 
             }
             else
@@ -275,25 +246,36 @@ namespace WorldOfZuul
 
 
 
-        private void List(char? type)
+        private static void List(char? type)
         {
             switch (type)
             {
                 case 'v':
-                    foreach (var villager in _villagers)
-                    {
-                        Console.WriteLine($"{villager.Id} | {villager.Name}");
-                    }
+                    if (Villagers != null)
+                        foreach (var villager in Villagers)
+                        {
+                            Console.WriteLine($"{villager.Id} | {villager.Name}");
+                        }
+
                     break;
                 case 'j':
                     Console.WriteLine("Jobs");
                     break;
                 case 'r':
-
-                    foreach (Room roomName in _rooms!)
+                    foreach (Room roomName in Rooms!)
                     {
                         Console.WriteLine(roomName!.ShortDescription);
                     }
+                    break;
+                case 'i':
+                    Console.WriteLine($"Food : {Resources.Food}");
+                    Console.WriteLine($"Hunger : {Resources.Hunger}");
+                    Console.WriteLine($"Saplings : {Resources.Saplings}");
+                    Console.WriteLine($"Animals : {Resources.Animals}");
+                    Console.WriteLine($"Grains : {Resources.Grains}");
+                    Console.WriteLine($"GrainSeeds : {Resources.GrainSeeds}");
+                    Console.WriteLine($"Trees : {Resources.Trees}");
+                    Console.WriteLine($"Wood : {Resources.Wood}");
                     break;
                 default:
                     Console.WriteLine("Wrong command! Try 'help' to see syntax.");
@@ -303,10 +285,46 @@ namespace WorldOfZuul
 
         private void AssignVillager(int villagerId, int jobId)
         {
-            foreach (var r in _rooms.Where(r => r is { Job: not null } && r.Job.Id  == jobId)) 
+            var villager = Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
+            if (villager == null)
             {
-                r?.Job?.AddVillager(_villagers[villagerId]);
+                Console.WriteLine($"No villager with ID {villagerId} found.");
+                return;
             }
+
+            Job? targetJob = null;
+            foreach (var room in Rooms)
+            {
+                if (room?.Jobs == null) continue;
+                foreach (var job in room.Jobs.OfType<Job>().Where(job => job.Id == jobId))
+                {
+                    targetJob = job;
+                }
+                if (targetJob != null) break;
+            }
+
+            if (targetJob == null)
+            {
+                Console.WriteLine($"No job with ID {jobId} found.");
+                return;
+            }
+
+            foreach (var room in Rooms)
+            {
+                if (room?.Jobs == null) continue;
+                foreach (var job in room.Jobs)
+                {
+                    job?.Villagers?.Remove(villager);
+                }
+            }
+
+            if (targetJob.Villagers != null && targetJob.Villagers.Contains(villager))
+            {
+                Console.WriteLine($"Villager with ID {villagerId} already assigned to {targetJob.Name}.");
+                return;
+            }
+            
+            targetJob.AddVillager(villager);
         }
     }
 }
