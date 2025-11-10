@@ -23,6 +23,7 @@
             "farm",
             "harvest",
             "cook",
+            "cut-forest"
         };
 
         public bool IsValidCommand(string command)

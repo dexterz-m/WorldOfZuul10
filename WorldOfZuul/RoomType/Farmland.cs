@@ -20,7 +20,7 @@
 
             Console.WriteLine("Available actions:");
             Console.WriteLine(" - build-farmland           : Build a new farmland");
-            Console.WriteLine(" - cut forest for farmland  : Convert forest to farmland (reduces sustainability)");
+            Console.WriteLine(" - cut-forest for farmland  : Cut 5 trees to make freeland (reduces sustainability)");
             Console.WriteLine();
             Console.WriteLine("Type a command to perform the action.");
             Console.WriteLine();
@@ -33,7 +33,7 @@
                 case "build-farmland":
                     BuildFarmland();
                     break;
-                case "cut-tree":
+                case "cut-forest":
                     CutForest();
                     break;
                 default:
@@ -79,13 +79,17 @@
             }
             
             Game.Resources.Trees -= 5;
-            SustainabilityPoints -= 10;
+            Game.Resources.Wood += 10;
+            Game.SustainabilityPoints -= 10;
             PossibleFarmland += 1;
 
             Console.WriteLine("You now have space for 1 more farmland.");
             
-            Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
+            Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
         }
+        
+        // make farm 
+        
     }
         
         

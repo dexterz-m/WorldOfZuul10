@@ -10,11 +10,7 @@ namespace WorldOfZuul.RoomType
         public List<Job?> Jobs { get; private set; } = new List<Job?>();
 
         // SustainabilityPoints proxy to Game.SustainabilityPoints
-        protected static int SustainabilityPoints
-        {
-            get => Game.SustainabilityPoints;
-            set => Game.SustainabilityPoints = value;
-        }
+        
         
         protected Room(string shortDesc, string longDesc)
         {
