@@ -3,6 +3,8 @@
     public class Farmland : Room
     {
         int FarmlandAmount {  get; set; }
+
+        int FarmlandPlanted { get; set; } = 0;
         
         int PossibleFarmland { get; set; } = 1; 
 
@@ -19,8 +21,10 @@
             Console.WriteLine();
 
             Console.WriteLine("Available actions:");
-            Console.WriteLine(" - build-farmland           : Build a new farmland");
-            Console.WriteLine(" - cut-forest for farmland  : Cut 5 trees to make freeland (reduces sustainability)");
+            Console.WriteLine(" - build farmland           : Build a new farmland");
+            Console.WriteLine(" - cut forest               : Cut 5 trees to make freeland (reduces sustainability)");
+            Console.WriteLine(" - plant farmland           : Plant on your farmland");
+            Console.WriteLine(" - farm                     : Farm your planted farmland");
             Console.WriteLine();
             Console.WriteLine("Type a command to perform the action.");
             Console.WriteLine();
@@ -30,11 +34,26 @@
         {
             switch (command.Name)
             {
-                case "build-farmland":
-                    BuildFarmland();
+                case "build":
+                    if (command.SecondWord == "farmland")
+                        BuildFarmland();
+                    else
+                        Console.WriteLine("Build what?");
                     break;
-                case "cut-forest":
-                    CutForest();
+                case "cut":
+                    if (command.SecondWord == "forest")
+                        CutForest();
+                    else
+                        Console.WriteLine("Cut what?");
+                    break;
+                case "farm":
+                    Farm();
+                    break;
+                case "plant":
+                    if (command.SecondWord == "farmland")
+                        PlantFarmland();
+                    else
+                        Console.WriteLine("Plant what?");
                     break;
                 default:
                     Console.WriteLine("Invalid command in the farmland.");
@@ -87,8 +106,55 @@
             
             Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
         }
+
+        public void PlantFarmland()
+        {
+            if(FarmlandPlanted < FarmlandAmount && Game.Resources.GrainSeeds >= 4)
+            {
+                FarmlandPlanted += 1;
+                Game.Resources.GrainSeeds -= 4;
+                //Console.WriteLine($"Garainseeds: {Game.Resources.GrainSeeds}");
+                Game.SustainabilityPoints += 8;
+                Console.WriteLine("You have planted 1 more farmland.");
+                Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
+            }
+            else
+            {
+                if (FarmlandPlanted == FarmlandAmount && Game.Resources.GrainSeeds < 4)
+                {
+                    Console.WriteLine("All your farmlands are planted and you dont have enough Grain seeds to plant a farmland");
+                }
+                else if(FarmlandPlanted == FarmlandAmount)
+                {
+                    Console.WriteLine("All your farmlands are planted.");
+                }
+                else
+                {
+                    Console.WriteLine("You dont have enough Grain seeds to plant a farmland");
+                }
+                
+            }
+        }
+
+        public void Farm()
+        {
+
+            if (FarmlandPlanted > 0)
+            {
+                FarmlandPlanted -= 1;
+                Game.Resources.GrainSeeds += 1;
+                //Console.WriteLine($"Garainseeds: {Game.Resources.GrainSeeds}");
+                Game.Resources.Food += 4;
+                Game.SustainabilityPoints -= 4;
+                Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
+            }
+            else
+            {
+                Console.WriteLine("None of your farmlands are planted.");
+            }
+        }
         
-        // make farm 
+        
         
     }
         

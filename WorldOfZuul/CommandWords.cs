@@ -16,14 +16,14 @@
             "cut", 
             "plant", 
             "kill", 
-            "build-farmland", 
+            "build", 
             "about", 
             "learn",
             "hunt",
             "farm",
             "harvest",
             "cook",
-            "cut-forest"
+            "cut"
         };
 
         public bool IsValidCommand(string command)

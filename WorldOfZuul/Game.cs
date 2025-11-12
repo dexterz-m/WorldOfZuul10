@@ -122,9 +122,6 @@ namespace WorldOfZuul
                             Resources.Animals = -1;
                             _sustainability -= 5;
                             break;
-                        case "farm":
-                            Resources.GrainSeeds = - 1;
-                            break;
                         case "harvest":
                             Resources.Grains = 1;
                             _sustainability -= 5;
@@ -136,8 +133,15 @@ namespace WorldOfZuul
                             _sustainability -= 5;
                             break;
                         case "plant":
-                            Resources.Saplings = -1;
-                            _sustainability += 10;
+                            if (command.SecondWord == "trees")
+                            {
+                                Resources.Saplings -= 1;
+                                _sustainability += 10;
+                            }
+                            else
+                            {
+                                _currentRoom?.CommandList(command);
+                            }
                             break;
                         case "cook":
                             Resources.Grains = -1;
