@@ -97,8 +97,8 @@
                 return;
             }
             
-            Game.Resources.Trees -= 5;
-            Game.Resources.Wood += 10;
+            Game.Resources.Trees = -5;
+            Game.Resources.Wood = 10;
             Game.SustainabilityPoints -= 10;
             PossibleFarmland += 1;
 
@@ -112,9 +112,10 @@
             if(FarmlandPlanted < FarmlandAmount && Game.Resources.GrainSeeds >= 4)
             {
                 FarmlandPlanted += 1;
-                Game.Resources.GrainSeeds -= 4;
+                Game.Resources.GrainSeeds = -4;
                 //Console.WriteLine($"Garainseeds: {Game.Resources.GrainSeeds}");
                 Game.SustainabilityPoints += 8;
+                
                 Console.WriteLine("You have planted 1 more farmland.");
                 Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
             }
@@ -142,9 +143,9 @@
             if (FarmlandPlanted > 0)
             {
                 FarmlandPlanted -= 1;
-                Game.Resources.GrainSeeds += 1;
+                Game.Resources.GrainSeeds = 1;
                 //Console.WriteLine($"Garainseeds: {Game.Resources.GrainSeeds}");
-                Game.Resources.Food += 4;
+                Game.Resources.Food = 4;
                 Game.SustainabilityPoints -= 4;
                 Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
             }
