@@ -4,8 +4,8 @@ namespace WorldOfZuul.RoomType
 {
     public class Forest : Room
     {
-        int Trees { get; set; } = 20; // one tree cut reduces SustainabilityPoints by 2
-        int Animals { get; set; } = 10; // one animal lost reduces SustainabilityPoints by 1
+         // one tree cut reduces SustainabilityPoints by 2
+         // one animal lost reduces SustainabilityPoints by 1
 
         // Single Random instance to avoid creating new seeds on each call
         private static readonly Random Rng = new();
@@ -19,9 +19,9 @@ namespace WorldOfZuul.RoomType
            
             // Display current state of the forest
             Console.WriteLine("Below are the current stats:");
-            Console.WriteLine($"Trees: {Trees}");
-            Console.WriteLine($"Animals: {Animals}");
-            Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
+            Console.WriteLine($"Trees: {Game.Resources.Trees}");
+            Console.WriteLine($"Animals: {Game.Resources.Animals}");
+            Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
             Console.WriteLine();
 
             // List available actions for the player
@@ -60,27 +60,27 @@ namespace WorldOfZuul.RoomType
         public void CutTree(int amount = 1)
         {
             // If there are fewer trees left, inform the player
-            if (Trees > amount)
+            if (Game.Resources.Trees > amount)
             {
                 Console.WriteLine("No trees left to cut.");
                 return;
             }
 
             // Cut the amount of trees
-            Trees -= amount;
+            Game.Resources.Trees = -amount;
 
             // Cutting a tree reduces sustainability
-            SustainabilityPoints -= 2;
+            Game.SustainabilityPoints -= 2;
 
             // If there are animals, randomly 1 to 3 disappear (but not more than current number of animals)
-            if (Animals > 0)
+            if (Game.Resources.Animals > 0)
             {
                 int animalsLost = Rng.Next(1, 4); // picks 1, 2 or 3
-                animalsLost = Math.Min(animalsLost, Animals); // don't remove more than exist
-                Animals -= animalsLost;
+                animalsLost = Math.Min(animalsLost, Game.Resources.Animals); // don't remove more than exist
+                Game.Resources.Animals = -animalsLost;
 
                 // Each lost animal reduces SustainabilityPoints by 1 (weight can be adjusted)
-                SustainabilityPoints -= animalsLost;
+                Game.SustainabilityPoints -= animalsLost;
             }
 
             // Hint to player about replanting
@@ -89,25 +89,25 @@ namespace WorldOfZuul.RoomType
 
         private void PlantTree()
         {
-            Trees++;
-            SustainabilityPoints += 2;
-            Console.WriteLine($"You planted a tree. Trees remaining: {Trees}.");
+            Game.Resources.Trees = 1;
+            Game.SustainabilityPoints += 2;
+            Console.WriteLine($"You planted a tree. Trees remaining: {Game.Resources.Trees}.");
         }
 
         public void KillAnimal(int amount = 1)
         {
             // If there are no animals left, inform the player
-            if (Animals > amount)
+            if (Game.Resources.Animals > amount)
             {
                 Console.WriteLine("No animals left to kill.");
                 return;
             }
 
             // Kill one animal
-            Animals -= amount;
+            Game.Resources.Animals = -amount;
 
             // Killing an animal reduces sustainability
-            SustainabilityPoints--;
+            Game.SustainabilityPoints--;
 
             // Prevent SustainabilityPoints from going negative
         }
