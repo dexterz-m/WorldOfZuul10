@@ -60,7 +60,7 @@ namespace WorldOfZuul.RoomType
         public void CutTree(int amount = 1)
         {
             // If there are fewer trees left, inform the player
-            if (Game.Resources.Trees > amount)
+            if (Game.Resources.Trees < amount)
             {
                 Console.WriteLine("No trees left to cut.");
                 return;

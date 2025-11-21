@@ -24,7 +24,8 @@
             "cut-forest",
             "harvest",
             "cook",
-            "cut"
+            "cut",
+            "catch"
         };
 
         public bool IsValidCommand(string command)

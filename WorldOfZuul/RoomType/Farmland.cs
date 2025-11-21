@@ -7,7 +7,7 @@
 
         int FarmlandPlanted { get; set; } = 0;
         
-        int PossibleFarmland { get; set; } = 1; 
+         
 
 
         public Farmland(string shortDesc, string longDesc) : base(shortDesc, longDesc)

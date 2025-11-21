@@ -18,8 +18,8 @@ namespace WorldOfZuul.RoomType
             Console.WriteLine($"Grain seeds in your pocket: {Game.Resources.GrainSeeds}");
 
             Console.WriteLine("Available actions:");
-            Console.WriteLine(" catch     - start fishing  : Catch fish");
-            Console.WriteLine(" feed-fish - feed fish      : Feed fish");
+            Console.WriteLine(" catch fish - start fishing  : Catch fish");
+            Console.WriteLine(" feed fish  - feed fish      : Feed fish");
             Console.WriteLine();
             Console.WriteLine("Type a command to perform the action.");
             Console.WriteLine();
@@ -30,10 +30,16 @@ namespace WorldOfZuul.RoomType
             switch (command.Name)
             {
                 case "catch":
-                    await CatchFish();
+                    if (command.SecondWord == "fish")
+                        await CatchFish();
+                    else
+                        Console.WriteLine("Catch what?");
                     break;
-                case "feed-fish":
-                    await FeedFish();
+                case "feed":
+                    if (command.SecondWord == "fish")
+                        await FeedFish();
+                    else
+                        Console.WriteLine("Feed who?");
                     break;
                 default:
                     Console.WriteLine("Invalid command for lake.");

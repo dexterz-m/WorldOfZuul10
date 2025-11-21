@@ -113,9 +113,16 @@ namespace WorldOfZuul
                             CurrentTurn++;
                             break;
                         case "feed":
-                            Resources.Food = - 1;
-                            Resources.Hunger = 50;
-                            CurrentTurn++;
+                            if (command.SecondWord == "villigers")
+                            {
+                                Resources.Food = - 1;
+                                Resources.Hunger = 50;
+                                CurrentTurn++;
+                            }
+                            else
+                            {
+                                _currentRoom?.CommandList(command);
+                            }
                             break;
                         case "hunt":
                             Resources.Food = 1;
