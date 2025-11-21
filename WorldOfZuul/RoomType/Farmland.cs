@@ -5,9 +5,9 @@
         int FarmlandAmount {  get; set; }
         int PossibleFarmland { get; set; } = 1; 
 
-        int Wood { get; set; } = 10; // Temporary variable 
-
-        private int Trees { get; set; } = 10; // Temporary variable 
+        int FarmlandPlanted { get; set; } = 0;
+        
+        int PossibleFarmland { get; set; } = 1; 
 
 
         public Farmland(string shortDesc, string longDesc) : base(shortDesc, longDesc)
@@ -23,8 +23,10 @@
             Console.WriteLine();
 
             Console.WriteLine("Available actions:");
-            Console.WriteLine(" - build-farmland           : Build a new farmland");
-            Console.WriteLine(" - cut-forest               : Cut 5 trees to free space for farmland (reduces sustainability)");
+            Console.WriteLine(" - build farmland           : Build a new farmland");
+            Console.WriteLine(" - cut forest               : Cut 5 trees to make freeland (reduces sustainability)");
+            Console.WriteLine(" - plant farmland           : Plant on your farmland");
+            Console.WriteLine(" - farm                     : Farm your planted farmland");
             Console.WriteLine();
             Console.WriteLine("Type a command to perform the action.");
             Console.WriteLine();
@@ -34,8 +36,26 @@
         {
             switch (command.Name)
             {
-                case "build-farmland":
-                    BuildFarmland();
+                case "build":
+                    if (command.SecondWord == "farmland")
+                        BuildFarmland();
+                    else
+                        Console.WriteLine("Build what?");
+                    break;
+                case "cut":
+                    if (command.SecondWord == "forest")
+                        CutForest();
+                    else
+                        Console.WriteLine("Cut what?");
+                    break;
+                case "farm":
+                    Farm();
+                    break;
+                case "plant":
+                    if (command.SecondWord == "farmland")
+                        PlantFarmland();
+                    else
+                        Console.WriteLine("Plant what?");
                     break;
                 case "cut-forest":
                     CutForest();
@@ -48,16 +68,16 @@
 
         public void BuildFarmland()
         {
-            if (Wood >= 5 && FarmlandAmount < PossibleFarmland)
+            if (Game.Resources.Wood >= 5 && FarmlandAmount < PossibleFarmland)
             {
                 FarmlandAmount += 1;
                 Console.WriteLine($"You have built a new farmland. Now you have: {FarmlandAmount} farmlands.");
             }
-            else if(Wood < 5 && FarmlandAmount == PossibleFarmland)
+            else if(Game.Resources.Wood < 5 && FarmlandAmount == PossibleFarmland)
             {
                 Console.WriteLine("You dont have enough wood and freeland to build farmland!!");
             }
-            else if(Wood < 5)
+            else if(Game.Resources.Wood < 5)
             {
                 Console.WriteLine("You dont have enough wood to build farmland!!");
             }
@@ -65,6 +85,7 @@
             {
                 Console.WriteLine("You dont have enough freeland to build farmland!!");
             }
+
         }
 
         public void CutForest()
@@ -75,25 +96,74 @@
                 return;
             }
             
-            if (Trees <= 0)
+            if (Game.Resources.Trees <= 0)
             {
                 Console.WriteLine("No trees left to cut.");
                 return;
             }
             
-            Trees -= 5;
-            SustainabilityPoints -= 10;
+            Game.Resources.Trees = -5;
+            Game.Resources.Wood = 10;
+            Game.SustainabilityPoints -= 10;
             PossibleFarmland += 1;
 
             Console.WriteLine("You now have space for 1 more farmland.");
             
-            Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
-            
-            
-            
-            
+            Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
+        }
+
+        public void PlantFarmland()
+        {
+            if(FarmlandPlanted < FarmlandAmount && Game.Resources.GrainSeeds >= 4)
+            {
+                FarmlandPlanted += 1;
+                Game.Resources.GrainSeeds = -4;
+                //Console.WriteLine($"Garainseeds: {Game.Resources.GrainSeeds}");
+                Game.SustainabilityPoints += 8;
+                
+                Console.WriteLine("You have planted 1 more farmland.");
+                Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
+            }
+            else
+            {
+                if (FarmlandPlanted == FarmlandAmount && Game.Resources.GrainSeeds < 4)
+                {
+                    Console.WriteLine("All your farmlands are planted and you dont have enough Grain seeds to plant a farmland");
+                }
+                else if(FarmlandPlanted == FarmlandAmount)
+                {
+                    Console.WriteLine("All your farmlands are planted.");
+                }
+                else
+                {
+                    Console.WriteLine("You dont have enough Grain seeds to plant a farmland");
+                }
+                
+            }
+        }
+
+        public void Farm()
+        {
+
+            if (FarmlandPlanted > 0)
+            {
+                FarmlandPlanted -= 1;
+                Game.Resources.GrainSeeds = 1;
+                //Console.WriteLine($"Garainseeds: {Game.Resources.GrainSeeds}");
+                Game.Resources.Food = 4;
+                Game.SustainabilityPoints -= 4;
+                Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
+            }
+            else
+            {
+                Console.WriteLine("None of your farmlands are planted.");
+            }
         }
         
         
+        
     }
+        
+        
 }
+
