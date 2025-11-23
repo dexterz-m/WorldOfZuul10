@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WorldOfZuul
+﻿namespace WorldOfZuul.Jobs
 {
     //NPC implementation
     public class Advisor
@@ -134,7 +128,6 @@ namespace WorldOfZuul
             Console.WriteLine("=== Current Resources ===");
             Console.WriteLine($"Sustainability Points : {Game.SustainabilityPoints}");
             Console.WriteLine($"Food                  : {Game.Resources.Food}");
-            Console.WriteLine($"Hunger                : {Game.Resources.Hunger}");
             Console.WriteLine($"Trees                 : {Game.Resources.Trees}");
             Console.WriteLine($"Animals               : {Game.Resources.Animals}");
             Console.WriteLine($"Wood                  : {Game.Resources.Wood}");
