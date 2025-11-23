@@ -8,9 +8,6 @@ namespace WorldOfZuul.RoomType
         public string LongDescription { get; private set; }
         public Dictionary<string, Room> Exits { get; private set; } = new();
         public List<Job?> Jobs { get; private set; } = new List<Job?>();
-
-        // SustainabilityPoints proxy to Game.SustainabilityPoints
-        
         
         protected Room(string shortDesc, string longDesc)
         {

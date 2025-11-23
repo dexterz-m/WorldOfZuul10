@@ -4,28 +4,27 @@
     {
         private List<string> ValidCommands { get; } = new List<string>
         {
-            "ls",
-            "feed",
-            "talk", 
+            "ls", 
+            "feed", //turn
+            "talk", //turn
             "sleep", 
-            "assign", 
-            "build", 
+            "assign", //turn
+            "build", //turn
             "help", 
             "quit", 
-            "cd", 
-            "cut", 
-            "plant", 
-            "kill", 
-            "build", 
+            "cd", //turn
+            "cut", //turn
+            "plant", //turn
+            "kill", //turn
+            "build-farmland", //turn
             "about", 
             "learn",
-            "hunt",
-            "farm",
-            "cut-forest",
-            "harvest",
-            "cook",
-            "cut",
-            "catch"
+            "hunt", //turn
+            "farm", //turn
+            "cut-forest", //turn
+            "harvest", //turn
+            "cook", //turn
+            "catch" //turn
         };
 
         public bool IsValidCommand(string command)

@@ -15,12 +15,6 @@ public class Resources
         set => _grainSeeds += value;
     }
 
-    public int Grains
-    {
-        get => _grains;
-        set => _grains += value;
-    }
-
     public int Hunger
     {
         get => _hunger;
