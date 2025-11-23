@@ -10,13 +10,14 @@ namespace WorldOfZuul.RoomType
         // Single Random instance to avoid creating new seeds on each call
         private static readonly Random Rng = new();
 
-        public Forest(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Lumberjack(1, 1))
+        public Forest(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Lumberjack())
         {
         }
 
         public override void EnterRoom()
         {
-           
+
+            Console.Clear();
             // Display current state of the forest
             Console.WriteLine("Below are the current stats:");
             Console.WriteLine($"Trees: {Game.Resources.Trees}");
@@ -41,13 +42,13 @@ namespace WorldOfZuul.RoomType
             switch (command.Name)
             {
                 case "cut":
-                    CutTree();
+                    Game.CurrentTurn += CutTree() ? 1 : 0;
                     break;
                 case "plant":
                     PlantTree();
                     break;
                 case "kill":
-                    KillAnimal();
+                    Game.CurrentTurn += KillAnimal() ? 1 : 0;
                     break;
                 default:
                     Console.WriteLine("Invalid command in the forest.");
@@ -57,17 +58,19 @@ namespace WorldOfZuul.RoomType
 
 
 
-        public void CutTree(int amount = 1)
+        public bool CutTree(int amount = 1)
         {
             // If there are fewer trees left, inform the player
             if (Game.Resources.Trees < amount)
             {
                 Console.WriteLine("No trees left to cut.");
-                return;
+                return false;
             }
 
             // Cut the amount of trees
             Game.Resources.Trees = -amount;
+            Game.Resources.Wood = amount * Rng.Next(1, 5);
+            Game.Resources.Saplings = amount * Rng.Next(1, 4);
 
             // Cutting a tree reduces sustainability
             Game.SustainabilityPoints -= 2;
@@ -85,31 +88,39 @@ namespace WorldOfZuul.RoomType
 
             // Hint to player about replanting
             Console.WriteLine("Consider planting a tree to maintain ecosystem balance.");
+            return true;
         }
 
-        private void PlantTree()
+        private static void PlantTree()
         {
+            if (Game.Resources.Saplings <= 0)
+            {
+                Console.WriteLine("No saplings available to plant.");
+                return;
+            }
+            Game.Resources.Saplings = -Game.Resources.Saplings;
             Game.Resources.Trees = 1;
             Game.SustainabilityPoints += 2;
+            Game.CurrentTurn++;
             Console.WriteLine($"You planted a tree. Trees remaining: {Game.Resources.Trees}.");
         }
 
-        public void KillAnimal(int amount = 1)
+        public bool KillAnimal(int amount = 1)
         {
             // If there are no animals left, inform the player
             if (Game.Resources.Animals > amount)
             {
                 Console.WriteLine("No animals left to kill.");
-                return;
+                return false;
             }
 
             // Kill one animal
             Game.Resources.Animals = -amount;
+            Game.Resources.Food = amount * Rng.Next(1, 4);
 
             // Killing an animal reduces sustainability
             Game.SustainabilityPoints--;
-
-            // Prevent SustainabilityPoints from going negative
+            return true;
         }
 
     }

@@ -2,13 +2,11 @@
 {
     public class Farmland : Room
     {
-        int FarmlandAmount {  get; set; }
-        int PossibleFarmland { get; set; } = 1; 
-
-        int FarmlandPlanted { get; set; } = 0;
-        
-         
-
+        private int FarmlandAmount {  get; set; }
+        private int PossibleFarmland { get; set; } = 1;
+        // stores the turn when the farmland was planted
+        private List<int> FarmlandPlanted { get; set; } = new List<int>();
+        private int FarmlandRipped { get; set; } = 0;
 
         public Farmland(string shortDesc, string longDesc) : base(shortDesc, longDesc)
         {
@@ -17,6 +15,7 @@
 
         public override void EnterRoom()
         {
+            Console.Clear();
             Console.WriteLine("You have entered the Farmland. Below are the current stats:");
             Console.WriteLine($"Farmlands: {FarmlandAmount}");
             Console.WriteLine($"Free farmlands: {PossibleFarmland - FarmlandAmount}");
@@ -37,65 +36,52 @@
             switch (command.Name)
             {
                 case "build":
-                    if (command.SecondWord == "farmland")
                         BuildFarmland();
-                    else
-                        Console.WriteLine("Build what?");
                     break;
                 case "cut":
-                    if (command.SecondWord == "forest")
                         CutForest();
-                    else
-                        Console.WriteLine("Cut what?");
                     break;
                 case "farm":
                     Farm();
                     break;
                 case "plant":
-                    if (command.SecondWord == "farmland")
                         PlantFarmland();
-                    else
-                        Console.WriteLine("Plant what?");
-                    break;
-                case "cut-forest":
-                    CutForest();
                     break;
                 default:
                     Console.WriteLine("Invalid command in the farmland.");
                     break;
             }
         }
-
-        public void BuildFarmland()
+        
+        private void BuildFarmland()
         {
-            if (Game.Resources.Wood >= 5 && FarmlandAmount < PossibleFarmland)
+            switch (Game.Resources.Wood)
             {
-                FarmlandAmount += 1;
-                Console.WriteLine($"You have built a new farmland. Now you have: {FarmlandAmount} farmlands.");
+                case >= 5 when FarmlandAmount < PossibleFarmland:
+                    FarmlandAmount += 1;
+                    Game.Resources.Wood = -5;
+                    Console.WriteLine($"You have built a new farmland. Now you have: {FarmlandAmount} farmlands.");
+                    Game.CurrentTurn++;
+                    break;
+                case < 5 when FarmlandAmount == PossibleFarmland:
+                    Console.WriteLine("You dont have enough wood and freeland to build farmland!!");
+                    break;
+                case < 5:
+                    Console.WriteLine("You dont have enough wood to build farmland!!");
+                    break;
+                default:
+                    Console.WriteLine("You dont have enough freeland to build farmland!!");
+                    break;
             }
-            else if(Game.Resources.Wood < 5 && FarmlandAmount == PossibleFarmland)
-            {
-                Console.WriteLine("You dont have enough wood and freeland to build farmland!!");
-            }
-            else if(Game.Resources.Wood < 5)
-            {
-                Console.WriteLine("You dont have enough wood to build farmland!!");
-            }
-            else
-            {
-                Console.WriteLine("You dont have enough freeland to build farmland!!");
-            }
-
         }
-
-        public void CutForest()
+        
+        private void CutForest()
         {
             if (PossibleFarmland > FarmlandAmount)
             {
                 Console.WriteLine("There is freeland no need to cut more trees for now.");
                 return;
             }
-            
             if (Game.Resources.Trees <= 0)
             {
                 Console.WriteLine("No trees left to cut.");
@@ -105,32 +91,33 @@
             Game.Resources.Trees = -5;
             Game.Resources.Wood = 10;
             Game.SustainabilityPoints -= 10;
-            PossibleFarmland += 1;
+            PossibleFarmland++;
 
             Console.WriteLine("You now have space for 1 more farmland.");
             
             Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
+            Game.CurrentTurn++;
         }
-
-        public void PlantFarmland()
+        
+        private void PlantFarmland()
         {
-            if(FarmlandPlanted < FarmlandAmount && Game.Resources.GrainSeeds >= 4)
+            if(FarmlandPlanted.Count < FarmlandAmount && Game.Resources.GrainSeeds >= 4)
             {
-                FarmlandPlanted += 1;
+                Game.CurrentTurn++;
+                FarmlandPlanted.Add(Game.CurrentTurn);
                 Game.Resources.GrainSeeds = -4;
-                //Console.WriteLine($"Garainseeds: {Game.Resources.GrainSeeds}");
                 Game.SustainabilityPoints += 8;
-                
+
                 Console.WriteLine("You have planted 1 more farmland.");
                 Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
             }
             else
             {
-                if (FarmlandPlanted == FarmlandAmount && Game.Resources.GrainSeeds < 4)
+                if (FarmlandPlanted.Count == FarmlandAmount && Game.Resources.GrainSeeds < 4)
                 {
                     Console.WriteLine("All your farmlands are planted and you dont have enough Grain seeds to plant a farmland");
                 }
-                else if(FarmlandPlanted == FarmlandAmount)
+                else if(FarmlandPlanted.Count == FarmlandAmount)
                 {
                     Console.WriteLine("All your farmlands are planted.");
                 }
@@ -141,29 +128,33 @@
                 
             }
         }
-
-        public void Farm()
+        
+        private void Farm()
         {
 
-            if (FarmlandPlanted > 0)
+            if (FarmlandRipped > 0)
             {
-                FarmlandPlanted -= 1;
-                Game.Resources.GrainSeeds = 1;
-                //Console.WriteLine($"Garainseeds: {Game.Resources.GrainSeeds}");
+                FarmlandRipped -= 1;
+                Game.Resources.GrainSeeds = 2;
                 Game.Resources.Food = 4;
                 Game.SustainabilityPoints -= 4;
+                Game.CurrentTurn++;
                 Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
             }
             else
             {
-                Console.WriteLine("None of your farmlands are planted.");
+                Console.WriteLine("None of your farmlands are ripe.");
             }
         }
         
-        
-        
+        private void RipenFarmland()
+        {
+            foreach (var farmland in FarmlandPlanted.Where(farmland => Game.CurrentTurn - farmland >= 3))
+            {
+                FarmlandRipped += 1;
+                FarmlandPlanted.Remove(farmland);
+            }
+        }
     }
-        
-        
 }
 

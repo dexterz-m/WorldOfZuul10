@@ -8,11 +8,16 @@ namespace WorldOfZuul
         public static readonly List<Room?> Rooms  = new List<Room?>();
         private static readonly List<Villager>? Villagers = new List<Villager>();
         public static readonly Resources Resources= new Resources();
-        public static int SustainabilityPoints { get; set; } = 10;
-        public static int CurrentTurn {get; set;}
-        
+        private static int _sustainabilityPoints;
+        public static int SustainabilityPoints
+        {
+            get => _sustainabilityPoints;
+            set => _sustainabilityPoints = value < 0 ? 0: value;
+        }
+
         private Room? _currentRoom;
-        private int _currentDay;
+        private int CurrentDay { get; set; }
+        public static int CurrentTurn {get; set;}
         private const int MaxTurnPerDay = 10;
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
@@ -24,6 +29,7 @@ namespace WorldOfZuul
         {
             CreateRooms();
             CreateVillagers();
+            CurrentDay = 0;
         }
 
         private void CreateRooms()
@@ -45,7 +51,7 @@ namespace WorldOfZuul
             _currentRoom = Rooms[0];
         }
 
-        private void CreateVillagers()
+        private static void CreateVillagers()
         {
             var job = Rooms[0]?.Jobs;
             if (job == null) return;
@@ -59,13 +65,13 @@ namespace WorldOfZuul
             Console.WriteLine($"You are starting in the {_currentRoom?.ShortDescription}");
             _currentRoom?.EnterRoom();
 
-            while (_continuePlaying && _currentDay <= MaxDay)
+            while (_continuePlaying && CurrentDay <= MaxDay)
             {
                 CurrentTurn = 0;
                 while (_continuePlaying && CurrentTurn < MaxTurnPerDay)
                 {
                     Console.WriteLine(_currentRoom?.ShortDescription);
-                    Console.WriteLine($"Day {_currentDay} of {MaxDay}");
+                    Console.WriteLine($"Day {CurrentDay} of {MaxDay}");
                     Console.WriteLine($"Turns left today: {MaxTurnPerDay - CurrentTurn}");
                     Console.Write("> ");
 
@@ -104,45 +110,17 @@ namespace WorldOfZuul
                             break;
                         case "assign":
                             AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
-                            CurrentTurn++;
                             break;
                         case "feed":
                             FeedVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
-                            break;
-                        case "hunt":
-                            Resources.Food = 1;
-                            Resources.Animals = -1;
-                            SustainabilityPoints -= 5;
-                            CurrentTurn++;
                             break;
                         case "harvest":
                             Resources.Grains = 1;
                             SustainabilityPoints -= 5;
                             CurrentTurn++;
                             break;
-                        case "chop":
-                            Resources.Wood = 1;
-                            Resources.Saplings = 2;
-                            Resources.Trees = -1;
-                            SustainabilityPoints -= 5;
-                            CurrentTurn++;
-                            break;
-                        case "plant":
-                            if (command.SecondWord == "trees")
-                            {
-                                Resources.Saplings -= 1;
-                                SustainabilityPoints += 10;
-                                CurrentTurn++;
-                            }
-                            else
-                            {
-                                _currentRoom?.CommandList(command);
-                            }
-                            break;
                         case "cook":
-                            Resources.Grains = -1;
-                            Resources.Food = 1;
-                            CurrentTurn++;
+                            Cook(Convert.ToInt32(command.SecondWord ?? "1"));
                             break;
                         case "talk":
                             _advisor.Talk();
@@ -168,8 +146,19 @@ namespace WorldOfZuul
 
             Console.WriteLine("Thank you for playing World of Zuul!");
         }
-        
-        private void FeedVillager(int villagerId, int foodAmount)
+
+        private static void Cook(int amount)
+        {
+            if (Resources.Grains < amount)
+            {
+                Console.WriteLine($"Not enough grains to cook {amount} food. You have {Resources.Grains} grains.");
+                return;
+            }
+            Resources.Grains = -amount;
+            Resources.Food = amount;
+            CurrentTurn++;
+        }
+        private static void FeedVillager(int villagerId, int foodAmount)
         {
             var villager = Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
             if (villager == null)
@@ -178,6 +167,7 @@ namespace WorldOfZuul
                 return;
             }
             villager.Feed(foodAmount);
+            CurrentTurn++;
         }
 
         private void ChangeRoom(string? nameString)
@@ -260,7 +250,7 @@ namespace WorldOfZuul
                 Console.WriteLine($"No villager with ID {villagerId} found.");
                 return;
             }
-            if (villager.CanWork == false)
+            if (!villager.CanWork)
             {
                 Console.WriteLine($"Villager with ID {villagerId} is not able to work. Try feeding them first.");
                 return;
@@ -299,6 +289,7 @@ namespace WorldOfZuul
             }
             
             targetJob.AddVillager(villager);
+            CurrentTurn++;
         }
         
         private static void FoodLoss()

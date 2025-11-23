@@ -46,12 +46,12 @@
         private int _challengeIndex = 0;
         private int _jokeIndex = 0;
 
-        private const double WORLD_TREES = 3.04e12;           // ~3.04 trillion trees
-        private const double WORLD_ANIMALS = 35.0e9;          // ~35 billion livestock 
-        private const double WORLD_CEREALS_TONNES = 2.99e9;   // ~2.99 billion tonnes cereals/year
-        private const double WORLD_SEED_TONNES = WORLD_CEREALS_TONNES * 0.06; // ~6% used as seed
-        private const double WORLD_ROUNDWOOD_M3 = 4.0e9;      // ~4.0 billion m³ roundwood removals/year
-        private const double WORLD_SAPLINGS_PER_YEAR = 5.0e9; // ~5 billion trees planted/year
+        private const double WorldTrees = 3.04e12;           // ~3.04 trillion trees
+        private const double WorldAnimals = 35.0e9;          // ~35 billion livestock 
+        private const double WorldCerealsTonnes = 2.99e9;   // ~2.99 billion tonnes cereals/year
+        private const double WorldSeedTonnes = WorldCerealsTonnes * 0.06; // ~6% used as seed
+        private const double WorldRoundwoodM3 = 4.0e9;      // ~4.0 billion m³ roundwood removals/year
+        private const double WorldSaplingsPerYear = 5.0e9; // ~5 billion trees planted/year
 
         public void Talk()
         {
@@ -149,27 +149,27 @@
             Console.WriteLine("=== Village → World (1 unit = 1% of world) ===");
 
             // Trees
-            double treesWorld = (trees / 100.0) * WORLD_TREES;
+            double treesWorld = (trees / 100.0) * WorldTrees;
             Console.WriteLine($"Trees: {trees} → ~{trees}% of world (~{treesWorld:N0} trees)");
 
             // Animals 
-            double animalsWorld = (animals / 100.0) * WORLD_ANIMALS;
+            double animalsWorld = (animals / 100.0) * WorldAnimals;
             Console.WriteLine($"Animals: {animals} → ~{animals}% of world (~{animalsWorld:N0} animals)");
 
             // Grains 
-            double grainsWorldTonnes = (grains / 100.0) * WORLD_CEREALS_TONNES;
+            double grainsWorldTonnes = (grains / 100.0) * WorldCerealsTonnes;
             Console.WriteLine($"Grains: {grains} → ~{grains}% of world cereals (~{grainsWorldTonnes:N0} tonnes/year)");
 
             // Grain seeds 
-            double seedWorldTonnes = (grainSeed / 100.0) * WORLD_SEED_TONNES;
+            double seedWorldTonnes = (grainSeed / 100.0) * WorldSeedTonnes;
             Console.WriteLine($"GrainSeeds: {grainSeed} → ~{grainSeed}% of seed use (~{seedWorldTonnes:N0} tonnes/year)");
 
             // Wood 
-            double woodWorldM3 = (wood / 100.0) * WORLD_ROUNDWOOD_M3;
+            double woodWorldM3 = (wood / 100.0) * WorldRoundwoodM3;
             Console.WriteLine($"Wood: {wood} → ~{wood}% of world removals (~{woodWorldM3:N0} m³/year)");
 
             // Saplings 
-            double saplingsWorld = (saplings / 100.0) * WORLD_SAPLINGS_PER_YEAR;
+            double saplingsWorld = (saplings / 100.0) * WorldSaplingsPerYear;
             Console.WriteLine($"Saplings: {saplings} → ~{saplings}% of world planting (~{saplingsWorld:N0} trees/year)");
 
             Console.WriteLine();
