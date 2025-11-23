@@ -24,6 +24,7 @@
             "cut-forest", //turn
             "harvest", //turn
             "cook", //turn
+            "catch" //turn
         };
 
         public bool IsValidCommand(string command)

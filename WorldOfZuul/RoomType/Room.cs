@@ -8,7 +8,7 @@ namespace WorldOfZuul.RoomType
         public string LongDescription { get; private set; }
         public Dictionary<string, Room> Exits { get; private set; } = new();
         public List<Job?> Jobs { get; private set; } = new List<Job?>();
-
+        
         protected Room(string shortDesc, string longDesc)
         {
             ShortDescription = shortDesc;

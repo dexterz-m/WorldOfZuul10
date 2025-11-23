@@ -1,4 +1,4 @@
-using WorldOfZuul.Jobs;
+﻿using WorldOfZuul.Jobs;
 using WorldOfZuul.RoomType;
 
 namespace WorldOfZuul
@@ -112,17 +112,21 @@ namespace WorldOfZuul
                             CurrentTurn++;
                             break;
                         case "feed":
-                            Resources.Food = - 1;
-                            Resources.Hunger = 50;
-                            CurrentTurn++;
+                            if (command.SecondWord == "villigers")
+                            {
+                                Resources.Food = - 1;
+                                Resources.Hunger = 50;
+                                CurrentTurn++;
+                            }
+                            else
+                            {
+                                _currentRoom?.CommandList(command);
+                            }
                             break;
                         case "hunt":
                             Resources.Food = 1;
                             Resources.Animals = -1;
                             _sustainability -= 5;
-                            break;
-                        case "farm":
-                            Resources.GrainSeeds = - 1;
                             break;
                         case "harvest":
                             _sustainability -= 5;
@@ -134,8 +138,15 @@ namespace WorldOfZuul
                             _sustainability -= 5;
                             break;
                         case "plant":
-                            Resources.Saplings = -1;
-                            _sustainability += 10;
+                            if (command.SecondWord == "trees")
+                            {
+                                Resources.Saplings -= 1;
+                                _sustainability += 10;
+                            }
+                            else
+                            {
+                                _currentRoom?.CommandList(command);
+                            }
                             break;
                         case "cook":
                             Resources.Food = 1;
@@ -220,9 +231,9 @@ namespace WorldOfZuul
                     Console.WriteLine("");
                     break;
                 case "Lake":
-                    Console.WriteLine("Fishes: 7");
                     Console.WriteLine("");
-                    Console.WriteLine("catch Fish");
+                    Console.WriteLine("Catch Fish");
+                    Console.WriteLine("Feed Fish");
                     Console.WriteLine("");
                     break;
                 case "School":
