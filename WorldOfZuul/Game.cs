@@ -6,7 +6,7 @@ namespace WorldOfZuul
     public class Game
     {
         public static readonly List<Room?> Rooms  = new List<Room?>();
-        private static readonly List<Villager>? Villagers = new List<Villager>();
+        public static readonly List<Villager>? Villagers = new List<Villager>();
         public static readonly Resources Resources= new Resources();
         private static int _sustainabilityPoints;
         public static int SustainabilityPoints
@@ -108,12 +108,6 @@ namespace WorldOfZuul
                         case "quit":
                             _continuePlaying = false;
                             break;
-                        case "assign":
-                            AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
-                            break;
-                        case "feed":
-                            FeedVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
-                            break;
                         case "harvest":
                             Resources.Grains = 1;
                             SustainabilityPoints -= 5;
@@ -158,18 +152,7 @@ namespace WorldOfZuul
             Resources.Food = amount;
             CurrentTurn++;
         }
-        private static void FeedVillager(int villagerId, int foodAmount)
-        {
-            var villager = Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
-            if (villager == null)
-            {
-                Console.WriteLine($"No villager with ID {villagerId} found.");
-                return;
-            }
-            villager.Feed(foodAmount);
-            CurrentTurn++;
-        }
-
+        
         private void ChangeRoom(string? nameString)
         {
             Console.Clear();
@@ -242,56 +225,6 @@ namespace WorldOfZuul
             }
         }
 
-        private static void AssignVillager(int villagerId, int jobId)
-        {
-            var villager = Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
-            if (villager == null)
-            {
-                Console.WriteLine($"No villager with ID {villagerId} found.");
-                return;
-            }
-            if (!villager.CanWork)
-            {
-                Console.WriteLine($"Villager with ID {villagerId} is not able to work. Try feeding them first.");
-                return;
-            }
-
-            Job? targetJob = null;
-            foreach (var room in Rooms)
-            {
-                if (room?.Jobs == null) continue;
-                foreach (var job in room.Jobs.OfType<Job>().Where(job => job.Id == jobId))
-                {
-                    targetJob = job;
-                }
-                if (targetJob != null) break;
-            }
-
-            if (targetJob == null)
-            {
-                Console.WriteLine($"No job with ID {jobId} found.");
-                return;
-            }
-
-            foreach (var room in Rooms)
-            {
-                if (room?.Jobs == null) continue;
-                foreach (var job in room.Jobs)
-                {
-                    job?.Villagers?.Remove(villager);
-                }
-            }
-
-            if (targetJob.Villagers != null && targetJob.Villagers.Contains(villager))
-            {
-                Console.WriteLine($"Villager with ID {villagerId} already assigned to {targetJob.Name}.");
-                return;
-            }
-            
-            targetJob.AddVillager(villager);
-            CurrentTurn++;
-        }
-        
         private static void FoodLoss()
         {
             if (Villagers == null) return;
@@ -300,6 +233,7 @@ namespace WorldOfZuul
                 villager.Starve(2);
             }
         }
+        
         private static void FoodLoss(int amount)
         {
             if (Villagers == null) return;

@@ -42,7 +42,7 @@
             }
         }
 
-        private void AboutProject()
+        private static void AboutProject()
         {
             Console.WriteLine("About this project:");
             Console.WriteLine("This is a learning game demonstrating simple resource and villager management.");
@@ -60,7 +60,7 @@
             Console.WriteLine();
         }
 
-        private void LearnSustainability()
+        private static void LearnSustainability()
         {
             Console.WriteLine("According to the SDG report of 2025, one of the main sustainability problems is overconsumption");
             Console.WriteLine("which will be the main focus of the game.The challenge we are faced with is to ensure sustainable" );

@@ -4,7 +4,7 @@ namespace WorldOfZuul.RoomType
 {
     public class Village : Room
     {
-        private int Villagers { get; set; } = 20;
+        private int Villagers { get; set; }
         private int Houses { get; set; } = 5;
         public Village(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Unemployed())
         {
@@ -15,6 +15,7 @@ namespace WorldOfZuul.RoomType
         public override void EnterRoom()
         {
 
+            Console.Clear();
             // Display current state of the village
             Console.WriteLine("Below are the current stats:");
             Console.WriteLine($"Villagers: {Villagers}");
@@ -40,10 +41,10 @@ namespace WorldOfZuul.RoomType
             switch (command.Name)
             {               
                 case "feed":
-                    Feed(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
+                    FeedVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
                     break;
                 case "assign":
-                    Assign(command.SecondWord, command.ThirdWord);
+                    AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
                     break;
                 default:
                     Console.WriteLine("I don't know what command.");
@@ -51,46 +52,66 @@ namespace WorldOfZuul.RoomType
             }
         }
 
-        void Feed(int villagerId, int amount)
+        
+        private static void FeedVillager(int villagerId, int foodAmount)
         {
-
-        }
-
-        private static void Assign(string? villagerId, string? jobId)
-        {
-            int vId;
-            int jId;
-            try
+            var villager = Game.Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
+            if (villager == null)
             {
-                vId = Convert.ToInt32(villagerId);
-                jId = Convert.ToInt32(jobId);
+                Console.WriteLine($"No villager with ID {villagerId} found.");
+                return;
             }
-            catch (FormatException)
+            villager.Feed(foodAmount);
+            Game.CurrentTurn++;
+        }
+        private static void AssignVillager(int villagerId, int jobId)
+        {
+            var villager = Game.Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
+            if (villager == null)
             {
-                Console.WriteLine("VillagerID and jobID must be a number! Try again or see 'help' for syntax.");
+                Console.WriteLine($"No villager with ID {villagerId} found.");
+                return;
+            }
+            if (!villager.CanWork)
+            {
+                Console.WriteLine($"Villager with ID {villagerId} is not able to work. Try feeding them first.");
                 return;
             }
 
-            //TODO: Add upper limit based on villagers list
-            if (vId < 0)
+            Job? targetJob = null;
+            foreach (var room in Game.Rooms)
             {
-                Console.WriteLine("No Villager with id {0}! Try 'ls v' to see villagers", vId);
+                if (room?.Jobs == null) continue;
+                foreach (var job in room.Jobs.OfType<Job>().Where(job => job.Id == jobId))
+                {
+                    targetJob = job;
+                }
+                if (targetJob != null) break;
             }
-            //TODO: Add upper limit based on jobs
-            if (jId < 0)
+
+            if (targetJob == null)
             {
-                Console.WriteLine("No Villager with id {0}! Try 'ls v' to see villagers", jId);
+                Console.WriteLine($"No job with ID {jobId} found.");
+                return;
             }
 
+            foreach (var room in Game.Rooms)
+            {
+                if (room?.Jobs == null) continue;
+                foreach (var job in room.Jobs)
+                {
+                    job?.Villagers?.Remove(villager);
+                }
+            }
 
-            //TODO: add villager to a room based on job
-            /*
-             * _rooms.AssignVillager(villagerId, jId);
-             * _rooms.Remove(villagerId);
-             */
-
-            //TODO: add resource gain based on villager experience
+            if (targetJob.Villagers != null && targetJob.Villagers.Contains(villager))
+            {
+                Console.WriteLine($"Villager with ID {villagerId} already assigned to {targetJob.Name}.");
+                return;
+            }
+            
+            targetJob.AddVillager(villager);
+            Game.CurrentTurn++;
         }
-
     }
 }

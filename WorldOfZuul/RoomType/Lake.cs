@@ -4,6 +4,7 @@ namespace WorldOfZuul.RoomType
 {
     public class Lake : Room
     {
+        private Random Rnd { get; set; } = new Random();
         int Fish { get; set; } = 10;
 
         public Lake(string shortDesc, string longDesc) : base(shortDesc, longDesc)
@@ -47,79 +48,102 @@ namespace WorldOfZuul.RoomType
             }
         }
 
-        public async Task CatchFish()
+        private async Task CatchFish()
         {
-
-            if (Fish >= 10)
+            switch (Fish)
             {
-                Random random = new Random();
+                case >= 10:
+                {
+                    Console.WriteLine("There's a lot of fish!");
+                    Console.WriteLine("You started fishing...");
+                    int waitTime = Rnd.Next(3000, 10000);
+                    
+                    await Task.Delay(waitTime);
 
-                Console.WriteLine("There's a lot of fish!");
+                    if (Rnd.NextDouble() <= 0.95)// 95% chance to catch fish
+                    {
+                        
+                        Console.WriteLine("You caught a fish!");
 
-                Console.WriteLine("You started fishing...");
-                int waitTime = random.Next(3000, 10000);
+                        Fish--;
+                        Game.Resources.Food = 1;
 
-                await Task.Delay(waitTime);
+                        Console.WriteLine($"Now you have {Game.Resources.Food} food.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("You didn't catch any fish this time.");
+                    }
 
-                Console.WriteLine("You caught a fish!");
+                    break;
+                }
+                case > 5:
+                {
+                    Console.WriteLine("Looks like lake is evenly populated!");
 
-                Fish--;
-                Game.Resources.Food = 1;
+                    Console.WriteLine("You started fishing...");
+                    int waitTime = Rnd.Next(7000, 15000);
 
-                Console.WriteLine($"Now you have {Game.Resources.Food} food.");
+                    await Task.Delay(waitTime);
+                    
+                    if (Rnd.NextDouble() <= 0.75) // 75% chance to catch fish
+                    {
+                        Console.WriteLine("You caught a fish!");
 
-            }
+                        Fish--;
+                        Game.Resources.Food = 1;
 
-            else if (Fish < 10 && Fish > 5)
-            {
-                Random random = new Random();
+                        Console.WriteLine($"Now you have {Game.Resources.Food} food.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("You didn't catch any fish this time.");
+                    }
 
-                Console.WriteLine("Looks like lake is evenly populated!");
+                    break;
+                }
+                case > 0:
+                {
+                    Console.WriteLine("Seems like there are not much fish left!");
 
-                Console.WriteLine("You started fishing...");
-                int waitTime = random.Next(7000, 15000);
+                    Console.WriteLine("You started fishing...");
+                    int waitTime = Rnd.Next(10000, 20000);
 
-                await Task.Delay(waitTime);
+                    await Task.Delay(waitTime);
+                    
+                    if (Rnd.NextDouble() <= 0.25) // 25% chance to catch fish
+                    {
+                        Console.WriteLine("You caught a fish!");
 
-                Console.WriteLine("You caught a fish!");
+                        Fish--;
+                        Game.Resources.Food = 1;
 
-                Fish--;
-                Game.Resources.Food = 1;
+                        Console.WriteLine($"Now you have {Game.Resources.Food} food.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("You didn't catch any fish this time.");
+                    }
 
-                Console.WriteLine($"Now you have {Game.Resources.Food} food.");
+                    Console.WriteLine("You caught a fish!");
 
-            }
+                    Fish--;
+                    Game.Resources.Food = 1;
 
-            else if (Fish <= 5 && Fish > 0)
-            {
-                Random random = new Random();
-
-                Console.WriteLine("Seems like there are not much fish left!");
-
-                Console.WriteLine("You started fishing...");
-                int waitTime = random.Next(10000, 20000);
-
-                await Task.Delay(waitTime);
-
-                Console.WriteLine("You caught a fish!");
-
-                Fish--;
-                Game.Resources.Food = 1;
-
-                Console.WriteLine($"Now you have {Game.Resources.Food} food.");
-            }
-            else
-            {
-                Console.WriteLine("There are no fishes to catch!");
+                    Console.WriteLine($"Now you have {Game.Resources.Food} food.");
+                    break;
+                }
+                default:
+                    Console.WriteLine("There are no fishes to catch!");
+                    break;
             }
         }
 
-        public async Task FeedFish()
+        private async Task FeedFish()
         {
 
             if (Game.Resources.GrainSeeds > 0)
             {
-                Random random = new Random();
                 Game.Resources.GrainSeeds = -1;
 
                 Console.WriteLine("You started feeding the fish with grain seeds...");
@@ -127,11 +151,11 @@ namespace WorldOfZuul.RoomType
 
                 await Task.Delay(3000);
 
-                int AddFish = random.Next(0, 3);
+                int addFish = Rnd.Next(0, 3);
 
-                Console.WriteLine($"{AddFish} fish came to your lake!");
+                Console.WriteLine($"{addFish} fish came to your lake!");
 
-                Fish += AddFish;
+                Fish += addFish;
             }
             else
             {
