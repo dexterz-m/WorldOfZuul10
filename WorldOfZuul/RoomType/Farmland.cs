@@ -41,8 +41,8 @@
                 case "cut":
                         CutForest();
                     break;
-                case "farm":
-                    Farm();
+                case "harvest":
+                    Harvest();
                     break;
                 case "plant":
                         PlantFarmland();
@@ -61,7 +61,7 @@
                     FarmlandAmount += 1;
                     Game.Resources.Wood = -5;
                     Console.WriteLine($"You have built a new farmland. Now you have: {FarmlandAmount} farmlands.");
-                    Game.CurrentTurn++;
+                    Game.NextTurn();
                     break;
                 case < 5 when FarmlandAmount == PossibleFarmland:
                     Console.WriteLine("You dont have enough wood and freeland to build farmland!!");
@@ -96,18 +96,18 @@
             Console.WriteLine("You now have space for 1 more farmland.");
             
             Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
-            Game.CurrentTurn++;
+            Game.NextTurn();
         }
         
         private void PlantFarmland()
         {
             if(FarmlandPlanted.Count < FarmlandAmount && Game.Resources.GrainSeeds >= 4)
             {
-                Game.CurrentTurn++;
                 FarmlandPlanted.Add(Game.CurrentTurn);
                 Game.Resources.GrainSeeds = -4;
                 Game.SustainabilityPoints += 8;
 
+                Game.NextTurn();
                 Console.WriteLine("You have planted 1 more farmland.");
                 Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
             }
@@ -129,7 +129,7 @@
             }
         }
         
-        private void Farm()
+        private void Harvest()
         {
 
             if (FarmlandRipped > 0)
@@ -138,7 +138,7 @@
                 Game.Resources.GrainSeeds = 2;
                 Game.Resources.Food = 4;
                 Game.SustainabilityPoints -= 4;
-                Game.CurrentTurn++;
+                Game.NextTurn();
                 Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
             }
             else
@@ -147,9 +147,9 @@
             }
         }
         
-        private void RipenFarmland()
+        public void RipenFarmland()
         {
-            foreach (var farmland in FarmlandPlanted.Where(farmland => Game.CurrentTurn - farmland >= 3))
+            foreach (var farmland in FarmlandPlanted.Where(farmland => Game.CurrentTurn - farmland >= 3).ToList())
             {
                 FarmlandRipped += 1;
                 FarmlandPlanted.Remove(farmland);

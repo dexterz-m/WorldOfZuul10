@@ -28,14 +28,25 @@ namespace WorldOfZuul
                 Console.WriteLine($"Remaining Food / Tried to feed: {Game.Resources.Food}/{{foodAmount}}");
                 return;
             }
-            Game.Resources.Food -= foodAmount;
-            Hunger += foodAmount;
+
+            if (Hunger + foodAmount * 10 > 100)
+            {
+                Game.Resources.Food -= (100 - Hunger) / 10;
+                Hunger = 100;
+                Console.WriteLine($"You can't overfeed a villager. Using only {foodAmount}");
+            }
+            else
+            {
+                Game.Resources.Food -= foodAmount;
+                Hunger += foodAmount * 10;
+            }
+            Game.NextTurn();
             Work();
         }
         
-        public void Starve(int foodAmount)
+        public void Starve(int turn = 1)
         {
-            Hunger -= foodAmount;
+            Hunger -= turn * 10;
             if (Hunger < 0) Hunger = 0;
             Work();
         }

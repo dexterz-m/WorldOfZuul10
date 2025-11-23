@@ -5,7 +5,7 @@ namespace WorldOfZuul.RoomType
     public class Lake : Room
     {
         private Random Rnd { get; set; } = new Random();
-        int Fish { get; set; } = 10;
+        private int Fish { get; set; } = 10;
 
         public Lake(string shortDesc, string longDesc) : base(shortDesc, longDesc)
         {
@@ -28,23 +28,25 @@ namespace WorldOfZuul.RoomType
 
         public override async void CommandList(Command command)
         {
-            switch (command.Name)
+            try
             {
-                case "catch":
-                    if (command.SecondWord == "fish")
+                switch (command.Name)
+                {
+                    case "catch":
                         await CatchFish();
-                    else
-                        Console.WriteLine("Catch what?");
-                    break;
-                case "feed":
-                    if (command.SecondWord == "fish")
+                        break;
+                    case "feed":
                         await FeedFish();
-                    else
                         Console.WriteLine("Feed who?");
-                    break;
-                default:
-                    Console.WriteLine("Invalid command for lake.");
-                    break;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid command for lake.");
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                await Console.Error.WriteLineAsync(e.Message);
             }
         }
 
@@ -74,6 +76,7 @@ namespace WorldOfZuul.RoomType
                     {
                         Console.WriteLine("You didn't catch any fish this time.");
                     }
+                    Game.NextTurn();
 
                     break;
                 }
@@ -99,6 +102,7 @@ namespace WorldOfZuul.RoomType
                     {
                         Console.WriteLine("You didn't catch any fish this time.");
                     }
+                    Game.NextTurn();
 
                     break;
                 }
@@ -131,6 +135,7 @@ namespace WorldOfZuul.RoomType
                     Game.Resources.Food = 1;
 
                     Console.WriteLine($"Now you have {Game.Resources.Food} food.");
+                    Game.NextTurn();
                     break;
                 }
                 default:
@@ -156,6 +161,7 @@ namespace WorldOfZuul.RoomType
                 Console.WriteLine($"{addFish} fish came to your lake!");
 
                 Fish += addFish;
+                Game.NextTurn();
             }
             else
             {

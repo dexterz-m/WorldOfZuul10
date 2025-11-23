@@ -46,6 +46,9 @@ namespace WorldOfZuul.RoomType
                 case "assign":
                     AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
                     break;
+                case "cook":
+                    Cook(Convert.ToInt32(command.SecondWord ?? "1"));
+                    break;
                 default:
                     Console.WriteLine("I don't know what command.");
                     break;
@@ -62,8 +65,9 @@ namespace WorldOfZuul.RoomType
                 return;
             }
             villager.Feed(foodAmount);
-            Game.CurrentTurn++;
+            Game.NextTurn();
         }
+        
         private static void AssignVillager(int villagerId, int jobId)
         {
             var villager = Game.Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
@@ -111,7 +115,19 @@ namespace WorldOfZuul.RoomType
             }
             
             targetJob.AddVillager(villager);
-            Game.CurrentTurn++;
+            Game.NextTurn();
+        }
+        
+        private static void Cook(int amount)
+        {
+            if (Game.Resources.Grains < amount)
+            {
+                Console.WriteLine($"Not enough grains to cook {amount} food. You have {Game.Resources.Grains} grains.");
+                return;
+            }
+            Game.Resources.Grains = -amount;
+            Game.Resources.Food = amount;
+            Game.NextTurn();
         }
     }
 }

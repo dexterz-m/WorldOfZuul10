@@ -67,9 +67,9 @@ namespace WorldOfZuul
 
             while (_continuePlaying && CurrentDay <= MaxDay)
             {
-                CurrentTurn = 0;
-                while (_continuePlaying && CurrentTurn < MaxTurnPerDay)
+                while (_continuePlaying && CurrentTurn % MaxTurnPerDay != 0 || CurrentTurn == 0)
                 {
+                    Console.WriteLine("---------------------------------------------------------------------------------");
                     Console.WriteLine(_currentRoom?.ShortDescription);
                     Console.WriteLine($"Day {CurrentDay} of {MaxDay}");
                     Console.WriteLine($"Turns left today: {MaxTurnPerDay - CurrentTurn}");
@@ -101,32 +101,22 @@ namespace WorldOfZuul
                             ChangeRoom(command.SecondWord);
                             break;
                         case "sleep":
-                            FoodLoss((MaxTurnPerDay - CurrentTurn) * 2); // Villagers lose food for remaining turns
+                            var turnLeft = MaxTurnPerDay - CurrentTurn;
                             Console.Clear();
-                            CurrentTurn = MaxTurnPerDay;
+                            NextTurn(turnLeft);
                             break;
                         case "quit":
                             _continuePlaying = false;
                             break;
-                        case "harvest":
-                            Resources.Grains = 1;
-                            SustainabilityPoints -= 5;
-                            CurrentTurn++;
-                            break;
-                        case "cook":
-                            Cook(Convert.ToInt32(command.SecondWord ?? "1"));
-                            break;
                         case "talk":
                             _advisor.Talk();
-                            CurrentTurn++;
+                            NextTurn();
                             break;
                         default:
                             // Not a global command: pass it to the current room to handle
                             _currentRoom?.CommandList(command);
                             break;
                     }
-                    
-                    FoodLoss();
 
                     // Prevent SustainabilityPoints from going negative
                     if (SustainabilityPoints < 0)
@@ -141,18 +131,6 @@ namespace WorldOfZuul
             Console.WriteLine("Thank you for playing World of Zuul!");
         }
 
-        private static void Cook(int amount)
-        {
-            if (Resources.Grains < amount)
-            {
-                Console.WriteLine($"Not enough grains to cook {amount} food. You have {Resources.Grains} grains.");
-                return;
-            }
-            Resources.Grains = -amount;
-            Resources.Food = amount;
-            CurrentTurn++;
-        }
-        
         private void ChangeRoom(string? nameString)
         {
             Console.Clear();
@@ -233,13 +211,16 @@ namespace WorldOfZuul
                 villager.Starve(2);
             }
         }
-        
-        private static void FoodLoss(int amount)
+
+        public static void NextTurn(int turns = 1)
         {
-            if (Villagers == null) return;
-            foreach (var villager in Villagers)
+            CurrentTurn += turns;
+            var farm = Rooms.FirstOrDefault(room => room?.ShortDescription == "Farmland") as Farmland;
+            for (int i = 0; i < turns; i++)
             {
-                villager.Starve(amount);
+                FoodLoss();
+                farm?.RipenFarmland();
+                Resources.TurnToTrees();
             }
         }
     }

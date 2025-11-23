@@ -4,8 +4,8 @@ namespace WorldOfZuul.RoomType
 {
     public class Forest : Room
     {
-         // one tree cut reduces SustainabilityPoints by 2
-         // one animal lost reduces SustainabilityPoints by 1
+        // one tree cut reduces SustainabilityPoints by 2
+        // one animal lost reduces SustainabilityPoints by 1
 
         // Single Random instance to avoid creating new seeds on each call
         private static readonly Random Rng = new();
@@ -42,21 +42,19 @@ namespace WorldOfZuul.RoomType
             switch (command.Name)
             {
                 case "cut":
-                    Game.CurrentTurn += CutTree() ? 1 : 0;
+                    Game.NextTurn(CutTree() ? 1 : 0);
                     break;
                 case "plant":
-                    PlantTree();
+                    Game.Resources.PlantSapling();
                     break;
                 case "kill":
-                    Game.CurrentTurn += KillAnimal() ? 1 : 0;
+                    Game.NextTurn(KillAnimal() ? 1 : 0);
                     break;
                 default:
                     Console.WriteLine("Invalid command in the forest.");
                     break;
             }
         }
-
-
 
         public bool CutTree(int amount = 1)
         {
@@ -91,20 +89,6 @@ namespace WorldOfZuul.RoomType
             return true;
         }
 
-        private static void PlantTree()
-        {
-            if (Game.Resources.Saplings <= 0)
-            {
-                Console.WriteLine("No saplings available to plant.");
-                return;
-            }
-            Game.Resources.Saplings = -Game.Resources.Saplings;
-            Game.Resources.Trees = 1;
-            Game.SustainabilityPoints += 2;
-            Game.CurrentTurn++;
-            Console.WriteLine($"You planted a tree. Trees remaining: {Game.Resources.Trees}.");
-        }
-
         public bool KillAnimal(int amount = 1)
         {
             // If there are no animals left, inform the player
@@ -122,6 +106,5 @@ namespace WorldOfZuul.RoomType
             Game.SustainabilityPoints--;
             return true;
         }
-
     }
 }
