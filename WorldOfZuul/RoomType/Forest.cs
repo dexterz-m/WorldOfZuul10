@@ -21,7 +21,7 @@ namespace WorldOfZuul.RoomType
             Console.WriteLine("Below are the current stats:");
             Console.WriteLine($"Trees: {Trees}");
             Console.WriteLine($"Animals: {Animals}");
-            Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
+            Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
             Console.WriteLine();
 
             // List available actions for the player
@@ -70,7 +70,7 @@ namespace WorldOfZuul.RoomType
             Trees -= amount;
 
             // Cutting a tree reduces sustainability
-            SustainabilityPoints -= 2;
+            Game.SustainabilityPoints -= 2;
 
             // If there are animals, randomly 1 to 3 disappear (but not more than current number of animals)
             if (Animals > 0)
@@ -78,9 +78,9 @@ namespace WorldOfZuul.RoomType
                 int animalsLost = Rng.Next(1, 4); // picks 1, 2 or 3
                 animalsLost = Math.Min(animalsLost, Animals); // don't remove more than exist
                 Animals -= animalsLost;
-
+                (this.Jobs[0] as Lumberjack).Work();
                 // Each lost animal reduces SustainabilityPoints by 1 (weight can be adjusted)
-                SustainabilityPoints -= animalsLost;
+                Game.SustainabilityPoints -= animalsLost;
             }
 
             // Hint to player about replanting
@@ -90,7 +90,7 @@ namespace WorldOfZuul.RoomType
         private void PlantTree()
         {
             Trees++;
-            SustainabilityPoints += 2;
+            Game.SustainabilityPoints += 2;
             Console.WriteLine($"You planted a tree. Trees remaining: {Trees}.");
         }
 
@@ -107,7 +107,7 @@ namespace WorldOfZuul.RoomType
             Animals -= amount;
 
             // Killing an animal reduces sustainability
-            SustainabilityPoints--;
+            Game.SustainabilityPoints--;
 
             // Prevent SustainabilityPoints from going negative
         }

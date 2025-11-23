@@ -33,7 +33,6 @@ namespace WorldOfZuul
 
         private void CreateRooms()
         {
-            
             Farmland farmlandMain = new("Farmland", "(Placeholder farmlandMain)");
             Forest forest = new("Forest", "(Placeholder forest)");
             Village village = new("Village", "(Placeholder village)");
@@ -126,7 +125,6 @@ namespace WorldOfZuul
                             Resources.GrainSeeds = - 1;
                             break;
                         case "harvest":
-                            Resources.Grains = 1;
                             _sustainability -= 5;
                             break;
                         case "chop":
@@ -140,7 +138,6 @@ namespace WorldOfZuul
                             _sustainability += 10;
                             break;
                         case "cook":
-                            Resources.Grains = -1;
                             Resources.Food = 1;
                             break;
                         case "talk":
@@ -272,7 +269,6 @@ namespace WorldOfZuul
                     Console.WriteLine($"Hunger : {Resources.Hunger}");
                     Console.WriteLine($"Saplings : {Resources.Saplings}");
                     Console.WriteLine($"Animals : {Resources.Animals}");
-                    Console.WriteLine($"Grains : {Resources.Grains}");
                     Console.WriteLine($"GrainSeeds : {Resources.GrainSeeds}");
                     Console.WriteLine($"Trees : {Resources.Trees}");
                     Console.WriteLine($"Wood : {Resources.Wood}");

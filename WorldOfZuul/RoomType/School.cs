@@ -13,7 +13,7 @@
             Console.WriteLine();
 
             // Display current sustainability points to give context
-            Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
+            Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
             Console.WriteLine();
 
             Console.WriteLine("Available actions:");
@@ -56,7 +56,7 @@
             Console.WriteLine("Sustainability basics:");
             Console.WriteLine("- Sustainable actions increase sustainability points and help preserve resources.");
             Console.WriteLine("- Unsustainable actions decrease sustainability points and can lead to resource depletion.");
-            Console.WriteLine($"Current Sustainability Points: {SustainabilityPoints}");
+            Console.WriteLine($"Current Sustainability Points: {Game.SustainabilityPoints}");
             Console.WriteLine();
         }
 

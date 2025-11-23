@@ -77,7 +77,6 @@ namespace WorldOfZuul
         {
             if (Food > 0 && resources.Food < Food) return false;
             if (GrainSeeds > 0 && resources.GrainSeeds < GrainSeeds) return false;
-            if (Grains > 0 && resources.Grains < Grains) return false;
             if (Animals > 0 && resources.Animals < Animals) return false;
             if (Trees > 0 && resources.Trees < Trees) return false;
             if (Wood > 0 && resources.Wood < Wood) return false;
@@ -91,7 +90,6 @@ namespace WorldOfZuul
 
             if (Food > 0) resources.Food = -Food;
             if (GrainSeeds > 0) resources.GrainSeeds = -GrainSeeds;
-            if (Grains > 0) resources.Grains = -Grains;
             if (Animals > 0) resources.Animals = -Animals;
             if (Trees > 0) resources.Trees = -Trees;
             if (Wood > 0) resources.Wood = -Wood;

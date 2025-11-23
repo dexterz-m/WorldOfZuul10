@@ -80,14 +80,13 @@
                 Console.WriteLine("No trees left to cut.");
                 return;
             }
-            
             Trees -= 5;
-            SustainabilityPoints -= 10;
+            Game.SustainabilityPoints -= 10;
             PossibleFarmland += 1;
 
             Console.WriteLine("You now have space for 1 more farmland.");
             
-            Console.WriteLine($"Sustainability Points: {SustainabilityPoints}");
+            Console.WriteLine($"Sustainability Points: {Game.SustainabilityPoints}");
             
             
             

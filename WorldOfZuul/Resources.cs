@@ -15,12 +15,6 @@ public class Resources
         set => _grainSeeds += value;
     }
 
-    public int Grains
-    {
-        get => _grains;
-        set => _grains += value;
-    }
-
     public int Hunger
     {
         get => _hunger;
@@ -54,7 +48,6 @@ public class Resources
     // Food and farming variables
     private int _food = 10;
     private int _grainSeeds = 0;
-    private int _grains = 0;
     private int _hunger = 0; // This can be assigned as 100 in start as 100%, but everyday it reduces by 25-40%, so player have to feed villagers everyday.
 
     // animals and forest variables 
