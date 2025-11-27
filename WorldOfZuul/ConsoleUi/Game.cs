@@ -2,7 +2,16 @@
 {
     public class Game
     {
-        // Only handle turns, days everything else is handled from UI class
+        // Only handle turns, days and showing the aproptiate template
+        
+        //How it should look:
+        /*
+         * {MainUiTemplate}
+         *
+         *
+         * 
+         * >
+         */
 
         public Game()
         {

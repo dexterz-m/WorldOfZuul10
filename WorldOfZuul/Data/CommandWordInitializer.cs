@@ -1,6 +1,6 @@
 ﻿namespace WorldOfZuul.Data;
 
-public class InitialzeCommandWords
+public class CommandWordInitializer
 {
     
 }
