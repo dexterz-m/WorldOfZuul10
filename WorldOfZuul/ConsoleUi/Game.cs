@@ -2,7 +2,7 @@
 {
     public class Game
     {
-        // Only handle turns, days and showing the aproptiate template
+        // Only handle turns, days 
         
         //How it should look:
         /*
@@ -18,6 +18,7 @@
         }
         public void Play()
         {
+            
         }
     }
 }

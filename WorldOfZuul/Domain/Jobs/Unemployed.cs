@@ -1,6 +1,6 @@
 ﻿namespace WorldOfZuul.Domain.Job;
 
-public class Hunter : IJob
+public class Unemployed : Job
 {
     
 }

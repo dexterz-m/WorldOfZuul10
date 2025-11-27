@@ -1,6 +1,6 @@
 ﻿namespace WorldOfZuul.Domain.Job;
 
-public class Lumberjack : IJob
+public class Hunter : Job
 {
     
 }

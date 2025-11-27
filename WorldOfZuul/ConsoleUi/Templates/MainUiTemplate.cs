@@ -7,7 +7,7 @@ public class MainUiTemplate
      * Day 'X' of 'MAX'
      * Turn left: 'X' of 'MAX'
      *
-     * { RommUiTemplate }
+     * { RoomUiTemplate }
      * 
      *  general commands
      */
