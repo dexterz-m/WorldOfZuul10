@@ -77,12 +77,15 @@ to maintain modularity, extensibility, and maintainability.
 
 
 using WorldOfZuul.ConsoleUi;
+using WorldOfZuul.Data;
+
 namespace WorldOfZuul
 {
     public class Program
     {
         public static void Main()
         {
+            IDataInitializer dataInitializer = new DataInitializer("");
             Game game = new Game();
             game.Play();
         }

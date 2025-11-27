@@ -1,4 +1,4 @@
-﻿namespace WorldOfZuul.Domain.Job;
+﻿namespace WorldOfZuul.Domain.Jobs;
 
 public abstract class Job : IJob
 {

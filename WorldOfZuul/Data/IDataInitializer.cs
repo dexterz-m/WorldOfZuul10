@@ -1,6 +1,6 @@
 ﻿using WorldOfZuul.Domain;
 using WorldOfZuul.Domain.CommandHandler;
-using WorldOfZuul.Domain.Job;
+using WorldOfZuul.Domain.Jobs;
 using WorldOfZuul.Domain.Rooms;
 
 namespace WorldOfZuul.Data;
