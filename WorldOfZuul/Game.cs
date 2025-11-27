@@ -6,7 +6,6 @@ namespace WorldOfZuul
     public class Game
     {
         public static readonly List<Room?> Rooms  = new List<Room?>();
-        public static readonly List<Villager>? Villagers = new List<Villager>();
         public static readonly Resources Resources= new Resources();
         private static int _sustainabilityPoints;
         public static int SustainabilityPoints
@@ -17,7 +16,8 @@ namespace WorldOfZuul
 
         private Room? _currentRoom;
         private int CurrentDay { get; set; }
-        public static int CurrentTurn {get; set;}
+        public static int TurnsThisDay {get; set;}
+        public static int TotalTurns { get; set; }
         private const int MaxTurnPerDay = 10;
         private const int MaxDay = 10;
         private bool _continuePlaying = true; // moved to field so rooms can change it via requests
@@ -28,7 +28,6 @@ namespace WorldOfZuul
         public Game()
         {
             CreateRooms();
-            CreateVillagers();
             CurrentDay = 0;
         }
 
@@ -49,14 +48,7 @@ namespace WorldOfZuul
             Rooms.Add(school);
             
             _currentRoom = Rooms[0];
-        }
-
-        private static void CreateVillagers()
-        {
-            var job = Rooms[0]?.Jobs;
-            if (job == null) return;
-            var v1 = new Villager(0, "asd");
-            Villagers?.Add(v1);
+            village.CreateVillagers(5);
         }
 
         public void Play()
@@ -67,12 +59,12 @@ namespace WorldOfZuul
 
             while (_continuePlaying && CurrentDay <= MaxDay)
             {
-                while (_continuePlaying && CurrentTurn % MaxTurnPerDay != 0 || CurrentTurn == 0)
+                while (_continuePlaying && TurnsThisDay < MaxTurnPerDay)
                 {
                     Console.WriteLine("---------------------------------------------------------------------------------");
                     Console.WriteLine(_currentRoom?.ShortDescription);
                     Console.WriteLine($"Day {CurrentDay} of {MaxDay}");
-                    Console.WriteLine($"Turns left today: {MaxTurnPerDay - CurrentTurn}");
+                    Console.WriteLine($"Turns left today: {MaxTurnPerDay - TurnsThisDay % MaxTurnPerDay}");
                     Console.Write("> ");
 
                     var input = Console.ReadLine();
@@ -101,7 +93,7 @@ namespace WorldOfZuul
                             ChangeRoom(command.SecondWord);
                             break;
                         case "sleep":
-                            var turnLeft = MaxTurnPerDay - CurrentTurn;
+                            var turnLeft = MaxTurnPerDay - TurnsThisDay;
                             Console.Clear();
                             NextTurn(turnLeft);
                             break;
@@ -126,6 +118,8 @@ namespace WorldOfZuul
                         // end of the game
                     }
                 }
+
+                CurrentDay++;
             }
 
             Console.WriteLine("Thank you for playing World of Zuul!");
@@ -160,11 +154,8 @@ namespace WorldOfZuul
             {
                 // List villagers and their status
                 case 'v':
-                    if (Villagers != null)
-                        foreach (var villager in Villagers)
-                        {
-                            Console.WriteLine($"{villager.Id} | {villager.Name} | Hunger: {villager.Hunger} | Can Work: {villager.CanWork}");
-                        }
+                    var village = Rooms.FirstOrDefault(room => room?.ShortDescription == "Village") as Village;
+                    village?.ListVillagers();
                     break;
                 
                 // List jobs and their status
@@ -203,22 +194,14 @@ namespace WorldOfZuul
             }
         }
 
-        private static void FoodLoss()
-        {
-            if (Villagers == null) return;
-            foreach (var villager in Villagers)
-            {
-                villager.Starve(2);
-            }
-        }
-
         public static void NextTurn(int turns = 1)
         {
-            CurrentTurn += turns;
+            TurnsThisDay += turns;
             var farm = Rooms.FirstOrDefault(room => room?.ShortDescription == "Farmland") as Farmland;
+            var village = Rooms.FirstOrDefault(room => room?.ShortDescription == "Village") as Village;
             for (int i = 0; i < turns; i++)
             {
-                FoodLoss();
+                village?.FoodLoss();
                 farm?.RipenFarmland();
                 Resources.TurnToTrees();
             }

@@ -68,7 +68,7 @@ namespace WorldOfZuul.RoomType
                         Console.WriteLine("You caught a fish!");
 
                         Fish--;
-                        Game.Resources.Food = 1;
+                        Game.Resources.Food += 1;
 
                         Console.WriteLine($"Now you have {Game.Resources.Food} food.");
                     }
@@ -94,7 +94,7 @@ namespace WorldOfZuul.RoomType
                         Console.WriteLine("You caught a fish!");
 
                         Fish--;
-                        Game.Resources.Food = 1;
+                        Game.Resources.Food += 1;
 
                         Console.WriteLine($"Now you have {Game.Resources.Food} food.");
                     }
@@ -120,7 +120,7 @@ namespace WorldOfZuul.RoomType
                         Console.WriteLine("You caught a fish!");
 
                         Fish--;
-                        Game.Resources.Food = 1;
+                        Game.Resources.Food += 1;
 
                         Console.WriteLine($"Now you have {Game.Resources.Food} food.");
                     }
@@ -132,7 +132,7 @@ namespace WorldOfZuul.RoomType
                     Console.WriteLine("You caught a fish!");
 
                     Fish--;
-                    Game.Resources.Food = 1;
+                    Game.Resources.Food += 1;
 
                     Console.WriteLine($"Now you have {Game.Resources.Food} food.");
                     Game.NextTurn();
@@ -149,7 +149,7 @@ namespace WorldOfZuul.RoomType
 
             if (Game.Resources.GrainSeeds > 0)
             {
-                Game.Resources.GrainSeeds = -1;
+                Game.Resources.GrainSeeds -= 1;
 
                 Console.WriteLine("You started feeding the fish with grain seeds...");
                 Console.WriteLine($"Now you have {Game.Resources.GrainSeeds} grain seeds left");

@@ -3,7 +3,7 @@ namespace WorldOfZuul;
 public class Resources
 {
     public int Food { get; set; } = 10;
-    public int GrainSeeds { get; set; } = 2;
+    public int GrainSeeds { get; set; } = 4;
     public int Grains { get; set; } = 0;
 
     public int Animals { get; set; } = 100;
@@ -17,8 +17,9 @@ public class Resources
         if (Saplings > 0)
         {
             Saplings--;
-            PlantedSaplings.Add(Game.CurrentTurn);
+            PlantedSaplings.Add(Game.TurnsThisDay);
             Console.WriteLine("You have planted a sapling.");
+            Game.NextTurn();
         }
         else
         {
@@ -28,7 +29,7 @@ public class Resources
     
     public void TurnToTrees()
     {
-        var maturedSaplings = PlantedSaplings.Where(turn => Game.CurrentTurn - turn >= 5).ToList();
+        var maturedSaplings = PlantedSaplings.Where(turn => Game.TurnsThisDay - turn >= 5).ToList();
         foreach (var turn in maturedSaplings)
         {
             Trees++;

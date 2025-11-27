@@ -4,11 +4,10 @@ namespace WorldOfZuul.RoomType
 {
     public class Village : Room
     {
-        private int Villagers { get; set; }
+        private static List<Villager> Villagers { get; set; } = new List<Villager>();
         private int Houses { get; set; } = 5;
         public Village(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Unemployed())
         {
-
         }
 
 
@@ -41,10 +40,10 @@ namespace WorldOfZuul.RoomType
             switch (command.Name)
             {               
                 case "feed":
-                    FeedVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
+                    FeedVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord ?? "1"));
                     break;
                 case "assign":
-                    AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord));
+                    if (AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord)))  Game.NextTurn() ;
                     break;
                 case "cook":
                     Cook(Convert.ToInt32(command.SecondWord ?? "1"));
@@ -58,35 +57,35 @@ namespace WorldOfZuul.RoomType
         
         private static void FeedVillager(int villagerId, int foodAmount)
         {
-            var villager = Game.Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
+            var villager = Villagers.FirstOrDefault(villager => villager.Id == villagerId);
             if (villager == null)
             {
                 Console.WriteLine($"No villager with ID {villagerId} found.");
                 return;
             }
-            villager.Feed(foodAmount);
             Game.NextTurn();
+            villager.Feed(foodAmount);
         }
         
-        private static void AssignVillager(int villagerId, int jobId)
+        private static bool AssignVillager(int villagerId, int jobId)
         {
-            var villager = Game.Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
+            var villager = Villagers.FirstOrDefault(villager => villager.Id == villagerId);
             if (villager == null)
             {
                 Console.WriteLine($"No villager with ID {villagerId} found.");
-                return;
+                return false;
             }
-            if (!villager.CanWork)
+            if (!villager.CanWork && jobId != 0)
             {
                 Console.WriteLine($"Villager with ID {villagerId} is not able to work. Try feeding them first.");
-                return;
+                return false;
             }
 
             Job? targetJob = null;
             foreach (var room in Game.Rooms)
             {
                 if (room?.Jobs == null) continue;
-                foreach (var job in room.Jobs.OfType<Job>().Where(job => job.Id == jobId))
+                foreach (var job in room.Jobs.Where(job => job?.Id == jobId))
                 {
                     targetJob = job;
                 }
@@ -96,7 +95,7 @@ namespace WorldOfZuul.RoomType
             if (targetJob == null)
             {
                 Console.WriteLine($"No job with ID {jobId} found.");
-                return;
+                return false;
             }
 
             foreach (var room in Game.Rooms)
@@ -111,11 +110,11 @@ namespace WorldOfZuul.RoomType
             if (targetJob.Villagers != null && targetJob.Villagers.Contains(villager))
             {
                 Console.WriteLine($"Villager with ID {villagerId} already assigned to {targetJob.Name}.");
-                return;
+                return false;
             }
             
             targetJob.AddVillager(villager);
-            Game.NextTurn();
+            return true;
         }
         
         private static void Cook(int amount)
@@ -125,9 +124,58 @@ namespace WorldOfZuul.RoomType
                 Console.WriteLine($"Not enough grains to cook {amount} food. You have {Game.Resources.Grains} grains.");
                 return;
             }
-            Game.Resources.Grains = -amount;
-            Game.Resources.Food = amount;
+            Game.Resources.Grains -= amount;
+            Game.Resources.Food += amount;
             Game.NextTurn();
+        }
+        
+        public void CreateVillagers(int numberOfVillagers = 3)
+        {
+            for (int i = 0; i < numberOfVillagers; i++)
+            {
+                var villager = new Villager(i + 1, $"Villager {i + 1}");
+                Villagers.Add(villager);
+            }
+
+            // Assign all villagers to unemployed job initially
+            foreach (var villager in Villagers)
+            {
+                AssignVillager(villager.Id, 0);
+            }
+        }
+        
+        public void FoodLoss()
+        {
+            foreach (var villager in Villagers)
+            {
+                bool canWork = villager.Starve(2);
+                if (!canWork) continue;
+                Console.WriteLine($"Villager {villager.Id} is too hungry to work!");
+                AssignVillager(villager.Id, 0);
+            }
+        }
+        
+        public void ListVillagers()
+        {
+                               
+            Console.WriteLine("+----+------------+--------+----------+");
+            Console.WriteLine("| ID |    Name    | Hunger | Can Work |");
+            foreach (var villager in Villagers)
+            {
+                Console.WriteLine("+----+------------+--------+----------+");
+                Console.Write($"| {villager.Id,2} | {villager.Name, 10} | ");
+                Console.BackgroundColor = villager.Hunger <= 25 ? ConsoleColor.Red : ConsoleColor.DarkGreen;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"{villager.Hunger, 6}");
+                Console.ResetColor();
+                Console.Write(" | "); 
+                Console.BackgroundColor = !villager.CanWork ? ConsoleColor.Red : ConsoleColor.DarkGreen;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"{villager.CanWork, 8}");
+                Console.ResetColor();
+                Console.WriteLine(" |");
+                Console.WriteLine("+----+------------+--------+----------+");
+            }
         }
     }
 }

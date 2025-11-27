@@ -10,7 +10,7 @@ namespace WorldOfZuul.RoomType
         // Single Random instance to avoid creating new seeds on each call
         private static readonly Random Rng = new();
 
-        public Forest(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Lumberjack())
+        public Forest(string shortDesc, string longDesc) : base(shortDesc, longDesc,  new List<Job?> { new Lumberjack() ,new Hunter() })
         {
         }
 
@@ -66,9 +66,9 @@ namespace WorldOfZuul.RoomType
             }
 
             // Cut the amount of trees
-            Game.Resources.Trees = -amount;
-            Game.Resources.Wood = amount * Rng.Next(1, 5);
-            Game.Resources.Saplings = amount * Rng.Next(1, 4);
+            Game.Resources.Trees -= amount;
+            Game.Resources.Wood += amount * Rng.Next(1, 5);
+            Game.Resources.Saplings += amount * Rng.Next(1, 4);
 
             // Cutting a tree reduces sustainability
             Game.SustainabilityPoints -= 2;
@@ -78,7 +78,7 @@ namespace WorldOfZuul.RoomType
             {
                 int animalsLost = Rng.Next(1, 4); // picks 1, 2 or 3
                 animalsLost = Math.Min(animalsLost, Game.Resources.Animals); // don't remove more than exist
-                Game.Resources.Animals = -animalsLost;
+                Game.Resources.Animals -= animalsLost;
 
                 // Each lost animal reduces SustainabilityPoints by 1 (weight can be adjusted)
                 Game.SustainabilityPoints -= animalsLost;
@@ -99,8 +99,8 @@ namespace WorldOfZuul.RoomType
             }
 
             // Kill one animal
-            Game.Resources.Animals = -amount;
-            Game.Resources.Food = amount * Rng.Next(1, 4);
+            Game.Resources.Animals -= amount;
+            Game.Resources.Food += amount * Rng.Next(1, 4);
 
             // Killing an animal reduces sustainability
             Game.SustainabilityPoints--;

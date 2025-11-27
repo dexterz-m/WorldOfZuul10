@@ -11,7 +11,8 @@ public class Job
      public string Name { get; }
      public string Description { get; }
      public List<Villager>? Villagers { get; private set; }
-     public Job(int id, string name, string description)
+
+     protected Job(int id, string name, string description)
      {
          Id = id;
          Name = name;

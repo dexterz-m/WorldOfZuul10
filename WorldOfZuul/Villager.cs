@@ -40,20 +40,22 @@ namespace WorldOfZuul
                 Game.Resources.Food -= foodAmount;
                 Hunger += foodAmount * 10;
             }
-            Game.NextTurn();
             Work();
         }
         
-        public void Starve(int turn = 1)
+        public bool Starve(int turn = 1)
         {
-            Hunger -= turn * 10;
+            Hunger -= turn * 2;
             if (Hunger < 0) Hunger = 0;
-            Work();
+            return Work();
         }
 
-        private void Work()
+        private bool Work()
         {
-            CanWork = this.Hunger > 25;
+            var latestCanWork = CanWork;
+            CanWork = Hunger >= 25;
+            // return true if villager just became unable to work
+            return latestCanWork && !CanWork;
         }
     }
 

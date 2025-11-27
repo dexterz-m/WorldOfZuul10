@@ -7,6 +7,7 @@
         // stores the turn when the farmland was planted
         private List<int> FarmlandPlanted { get; set; } = new List<int>();
         private int FarmlandRipped { get; set; } = 0;
+        Random Rnd = new  Random();
 
         public Farmland(string shortDesc, string longDesc) : base(shortDesc, longDesc)
         {
@@ -59,7 +60,7 @@
             {
                 case >= 5 when FarmlandAmount < PossibleFarmland:
                     FarmlandAmount += 1;
-                    Game.Resources.Wood = -5;
+                    Game.Resources.Wood -= 5;
                     Console.WriteLine($"You have built a new farmland. Now you have: {FarmlandAmount} farmlands.");
                     Game.NextTurn();
                     break;
@@ -88,8 +89,8 @@
                 return;
             }
             
-            Game.Resources.Trees = -5;
-            Game.Resources.Wood = 10;
+            Game.Resources.Trees -= 5;
+            Game.Resources.Wood += 10;
             Game.SustainabilityPoints -= 10;
             PossibleFarmland++;
 
@@ -103,8 +104,8 @@
         {
             if(FarmlandPlanted.Count < FarmlandAmount && Game.Resources.GrainSeeds >= 4)
             {
-                FarmlandPlanted.Add(Game.CurrentTurn);
-                Game.Resources.GrainSeeds = -4;
+                FarmlandPlanted.Add(Game.TotalTurns);
+                Game.Resources.GrainSeeds -= 4;
                 Game.SustainabilityPoints += 8;
 
                 Game.NextTurn();
@@ -135,11 +136,11 @@
             if (FarmlandRipped > 0)
             {
                 FarmlandRipped -= 1;
-                Game.Resources.GrainSeeds = 2;
-                Game.Resources.Food = 4;
+                Game.Resources.GrainSeeds += Rnd.Next(3, 7);
+                Game.Resources.Food += 4;
                 Game.SustainabilityPoints -= 4;
                 Game.NextTurn();
-                Console.WriteLine($"Now you have {FarmlandPlanted} planted farmlands.");
+                Console.WriteLine($"Now you have {FarmlandPlanted.Count} planted farmlands.");
             }
             else
             {
@@ -149,7 +150,7 @@
         
         public void RipenFarmland()
         {
-            foreach (var farmland in FarmlandPlanted.Where(farmland => Game.CurrentTurn - farmland >= 3).ToList())
+            foreach (var farmland in FarmlandPlanted.Where(farmland => Game.TotalTurns - farmland >= 3).ToList())
             {
                 FarmlandRipped += 1;
                 FarmlandPlanted.Remove(farmland);
@@ -157,4 +158,3 @@
         }
     }
 }
-
