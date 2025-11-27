@@ -139,7 +139,7 @@ namespace WorldOfZuul
             Console.WriteLine($"Animals               : {Game.Resources.Animals}");
             Console.WriteLine($"Wood                  : {Game.Resources.Wood}");
             Console.WriteLine($"Saplings              : {Game.Resources.Saplings}");
-            Console.WriteLine($"Grains                : {Game.Resources.Grains}");
+            //Console.WriteLine($"Grains                : {Game.Resources.Grains}");
             Console.WriteLine($"GrainSeeds            : {Game.Resources.GrainSeeds}");
             Console.WriteLine();
         }
@@ -148,7 +148,7 @@ namespace WorldOfZuul
         {
             int trees     = Math.Max(0, Game.Resources.Trees);
             int animals   = Math.Max(0, Game.Resources.Animals);
-            int grains    = Math.Max(0, Game.Resources.Grains);
+            //int grains    = Math.Max(0, Game.Resources.Grains);
             int grainSeed = Math.Max(0, Game.Resources.GrainSeeds);
             int wood      = Math.Max(0, Game.Resources.Wood);
             int saplings  = Math.Max(0, Game.Resources.Saplings);
@@ -164,8 +164,8 @@ namespace WorldOfZuul
             Console.WriteLine($"Animals: {animals} → ~{animals}% of world (~{animalsWorld:N0} animals)");
 
             // Grains 
-            double grainsWorldTonnes = (grains / 100.0) * WORLD_CEREALS_TONNES;
-            Console.WriteLine($"Grains: {grains} → ~{grains}% of world cereals (~{grainsWorldTonnes:N0} tonnes/year)");
+            //double grainsWorldTonnes = (grains / 100.0) * WORLD_CEREALS_TONNES;
+            //Console.WriteLine($"Grains: {grains} → ~{grains}% of world cereals (~{grainsWorldTonnes:N0} tonnes/year)");
 
             // Grain seeds 
             double seedWorldTonnes = (grainSeed / 100.0) * WORLD_SEED_TONNES;

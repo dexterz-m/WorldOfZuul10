@@ -16,12 +16,11 @@
             "cut", //turn
             "plant", //turn
             "kill", //turn
-            "build-farmland", //turn
+            
             "about", 
             "learn",
             "hunt", //turn
             "farm", //turn
-            "cut-forest", //turn
             "harvest", //turn
             "cook", //turn
             "catch" //turn
