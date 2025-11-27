@@ -76,6 +76,7 @@ to maintain modularity, extensibility, and maintainability.
 */
 
 
+using WorldOfZuul.ConsoleUi;
 namespace WorldOfZuul
 {
     public class Program
