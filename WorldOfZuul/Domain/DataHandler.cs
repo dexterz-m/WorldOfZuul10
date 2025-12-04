@@ -1,4 +1,5 @@
 ﻿using WorldOfZuul.Data;
+using WorldOfZuul.Domain.CommandHandler;
 using WorldOfZuul.Domain.Jobs;
 using WorldOfZuul.Domain.Rooms;
 
@@ -6,12 +7,25 @@ namespace WorldOfZuul.Domain;
 
 public class DataHandler
 {
+
+   public string[] GetUiData(Command command)
+   {
+      return new string[] { };
+   }
+   
    public List<Room> Rooms { get; private set; }
    public List<Villager> Villagers { get; private set; }
    public Resources Resources { get; private set; }
    public Advisor Advisor { get; private set; }
    public List<Job> Jobs { get; private set; }
    public Room CurrentRoom { get; private set; }
+   
+   public int fish { get; private set; }
+   
+   public int FarmlandAmount {  get; set; }
+   public int PossibleFarmland { get; set; } = 1; 
+
+   public int FarmlandPlanted { get; set; } = 0;
 
    public DataHandler(IDataInitializer dataInitializer)
    {

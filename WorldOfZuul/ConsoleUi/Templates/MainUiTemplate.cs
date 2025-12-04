@@ -1,4 +1,5 @@
-﻿using WorldOfZuul.Domain.Rooms;
+﻿using WorldOfZuul.Domain;
+using WorldOfZuul.Domain.Rooms;
 namespace WorldOfZuul.ConsoleUi.Templates;
 
 public class MainUiTemplate
@@ -8,7 +9,7 @@ public class MainUiTemplate
 
 
     
-    public void RenderMain(int CurrentDay, int MaxDay, int TurnsLeft, int MaxTurnPerDay, Room? _CurrentRoom)
+    public void RenderMain(int CurrentDay, int MaxDay, int TurnsLeft, int MaxTurnPerDay, DataHandler dh )
     {
         Console.Clear();
 
@@ -16,7 +17,7 @@ public class MainUiTemplate
         Console.WriteLine($"Turns left: {TurnsLeft} of {MaxTurnPerDay}");
         Console.WriteLine();
 
-        _roomUi.RenderRoom(_CurrentRoom);
+        _roomUi.RenderRoom(dh);
         Console.WriteLine();
 
         Console.WriteLine("General Commands:");
