@@ -85,9 +85,9 @@ namespace WorldOfZuul
     {
         public static void Main()
         {
-            IDataInitializer dataInitializer = new DataInitializer("");
+            IDataInitializer dataInitializer = new DataInitializer(Directory.GetCurrentDirectory());
             Game game = new Game();
-            game.Play();
+            game.Play(dataInitializer);
         }
     }
 }
