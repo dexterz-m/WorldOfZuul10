@@ -1,4 +1,5 @@
-﻿using WorldOfZuul.Domain.CommandHandler;
+﻿using WorldOfZuul.ConsoleUi;
+using WorldOfZuul.Domain.CommandHandler;
 using WorldOfZuul.Domain.Jobs;
 
 namespace WorldOfZuul.Domain.Rooms;
@@ -6,6 +7,7 @@ namespace WorldOfZuul.Domain.Rooms;
 public class Forest : Room
 {
     private static readonly Random Rng = new();
+    private Resources _resources = new Resources();
 
     public Forest(string shortDesc, string longDesc) : base(shortDesc, longDesc, new Lumberjack(1, 1))
     {
@@ -15,6 +17,25 @@ public class Forest : Room
     {
         return "You have entered the Forest.";
     }
+
+    public override string RoomCommandHandler(Command command, Resources resources)
+    {
+
+        _resources = resources;
+
+        switch (command.Name)
+        {
+            case "cut":
+                return CutTree();
+            case "plant":
+                return PlantSapling();
+            case "kill":
+                return KillAnimal();
+            default:
+                return "Invalid command in the forest.";
+        }
+    }
+
 
     public string GetForestStats(Resources resources, int sustainabilityPoints)
     {
@@ -29,52 +50,59 @@ public class Forest : Room
                "Type a command to perform the action.\n";
     }
 
-    public (string message, int sustainabilityChange, int animalsLost) CutTree(Resources resources, int amount = 1)
+    public string CutTree(int amount = 1)
     {
-        if (resources.Trees < amount)
+        if (_resources.Trees < amount)
         {
-            return ("No trees left to cut.", 0, 0);
+            return "No trees left to cut.";
         }
 
-        resources.Trees -= amount;
-        resources.Wood += amount * 2;
-        
-        int sustainabilityLoss = -2 * amount;
-        int animalsLost = 0;
+        _resources.Trees -= amount;
+        _resources.Wood += amount * Rng.Next(1, 5);
+        _resources.Saplings += amount * Rng.Next(1, 4);
+        _resources.SustainabilityPoints -= 2;
 
-        if (resources.Animals > 0)
+
+        if (_resources.Animals > 0)
         {
-            animalsLost = Rng.Next(1, 4);
-            animalsLost = Math.Min(animalsLost, resources.Animals);
-            resources.Animals -= animalsLost;
-            sustainabilityLoss -= animalsLost;
+            int animalsLost = Rng.Next(1, 4); // picks 1, 2 or 3
+            animalsLost = Math.Min(animalsLost, _resources.Animals); // don't remove more than exist
+            _resources.Animals -= animalsLost;
+
+            // Each lost animal reduces SustainabilityPoints by 1 (weight can be adjusted)
+            _resources.SustainabilityPoints -= animalsLost;
         }
 
         string message = $"You cut {amount} tree(s). Consider planting a tree to maintain ecosystem balance.";
-        if (animalsLost > 0)
-        {
-            message += $"\n{animalsLost} animal(s) left the area due to habitat loss.";
-        }
 
-        return (message, sustainabilityLoss, animalsLost);
+        return message;
     }
 
-    public (string message, int sustainabilityChange) PlantTree(Resources resources)
+    public string PlantSapling()
     {
-        resources.Trees += 1;
-        return ($"You planted a tree. Trees remaining: {resources.Trees}.", 2);
+        if (_resources.Saplings > 0)
+        {
+            _resources.Saplings--;
+            //PlantedSaplings.Add(DataHandler.TurnsThisDay);
+            return "You have planted a sapling.";
+        }
+        else
+        {
+            return "You don't have any saplings to plant.";
+        }
     }
 
-    public (string message, int sustainabilityChange) KillAnimal(Resources resources, int amount = 1)
+    public string KillAnimal(int amount = 1)
     {
-        if (resources.Animals < amount)
+        if (_resources.Animals < amount)
         {
-            return ("No animals left to kill.", 0);
+            return "No animals left to kill.";
         }
 
-        resources.Animals -= amount;
-        resources.Food += amount * 2;
-        
-        return ($"You killed {amount} animal(s).", -amount);
+        _resources.Animals -= amount;
+        _resources.Food += amount * Rng.Next(1, 4);
+        _resources.SustainabilityPoints--;
+
+        return $"You killed {amount} animal(s).";
     }
 }

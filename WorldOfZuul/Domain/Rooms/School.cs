@@ -4,6 +4,7 @@ namespace WorldOfZuul.Domain.Rooms;
 
 public class School : Room
 {
+    private Resources _resources = new Resources();
     public School(string shortDesc, string longDesc) : base(shortDesc, longDesc)
     {
     }
@@ -13,16 +14,21 @@ public class School : Room
         return "You have entered the School. Learn about sustainability here.";
     }
 
-    public string GetSchoolInfo(int sustainabilityPoints)
+    public override string RoomCommandHandler(Command command, Resources resources)
     {
-        return $"Sustainability Points: {sustainabilityPoints}\n\n" +
-               "Available actions:\n" +
-               "about : About the project\n" +
-               "learn : Learn about sustainability\n\n" +
-               "Type a command to perform the action.\n";
+        switch (command.Name)
+        {
+            case "about":
+                return AboutProject();
+            case "learn":
+            case "read":
+                return LearnSustainability();
+            default:
+                return "Invalid command in the school. Try 'about' or 'learn'.";
+        }
     }
 
-    public string GetAboutProject(int sustainabilityPoints)
+    public string AboutProject()
     {
         return "About this project:\n" +
                "This is a learning game demonstrating simple resource and villager management.\n" +
@@ -34,7 +40,7 @@ public class School : Room
                "Sustainability basics:\n" +
                "- Sustainable actions increase sustainability points and help preserve resources.\n" +
                "- Unsustainable actions decrease sustainability points and can lead to resource depletion.\n" +
-               $"Current Sustainability Points: {sustainabilityPoints}\n";
+               $"Current Sustainability Points: {_resources.SustainabilityPoints}\n";
     }
 
     public string LearnSustainability()

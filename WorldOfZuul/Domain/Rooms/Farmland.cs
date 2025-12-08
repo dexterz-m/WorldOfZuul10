@@ -1,16 +1,15 @@
-﻿using WorldOfZuul.ConsoleUi;
-using WorldOfZuul.Domain.CommandHandler;
+﻿using WorldOfZuul.Domain.CommandHandler;
 
 namespace WorldOfZuul.Domain.Rooms;
 
 public class Farmland : Room
 {
-    public int FarmlandAmount { get; private set; }
-    public int PossibleFarmland { get; private set; } = 1;
-    private int FarmlandRipped { get; set; } = 0;
+    private int FarmlandAmount { get; set; }
+    private int PossibleFarmland { get; set; } = 1;
+    public int FarmlandRipped { get; private set; } = 0;
     private List<int> FarmlandPlanted { get; set; } = new List<int>();
 
-    Random Rnd = new Random();
+    private Resources _resources = new Resources();
 
     public Farmland(string shortDesc, string longDesc) : base(shortDesc, longDesc)
     {
@@ -21,28 +20,51 @@ public class Farmland : Room
     {
         return "You have entered the Farmland. Below are the current stats:\n" +
                $"Farmlands: {FarmlandAmount}\n" +
-               $"Free farmlands: {PossibleFarmland - FarmlandAmount}\n\n" +
+               $"Free farmlands: {PossibleFarmland - FarmlandAmount}\n" +
+               $"Planted farmlands: {FarmlandPlanted.Count}\n" +
+               $"Ripe farmlands: {FarmlandRipped}\n\n" +
                "Available actions:\n" +
                " - build farmland           : Build a new farmland\n" +
                " - cut forest               : Cut 5 trees to make freeland (reduces sustainability)\n" +
                " - plant farmland           : Plant on your farmland\n" +
-               " - farm                     : Farm your planted farmland\n\n" +
+               " - harvest                  : Harvest your ripe farmland\n\n" +
                "Type a command to perform the action.\n";
     }
 
-    public string BuildFarmland(Resources resources)
+    public override string RoomCommandHandler(Command command, Resources resources)
     {
-        if (resources.Wood >= 5 && FarmlandAmount < PossibleFarmland)
+        string result;
+
+        _resources = resources;
+
+        switch (command.Name)
+        {
+            case "build":
+                return BuildFarmland();
+            case "cut":
+                return CutForest();               
+            case "harvest":
+                return Harvest();
+            case "plant":
+                return PlantFarmland();
+            default:
+                return "Invalid command in the farmland.";
+        }
+    }
+
+    public string BuildFarmland()
+    {
+        if (_resources.Wood >= 5 && FarmlandAmount < PossibleFarmland)
         {
             FarmlandAmount += 1;
-            resources.Wood -= 5;
+            _resources.Wood -= 5;
             return $"You have built a new farmland. Now you have: {FarmlandAmount} farmlands.";
         }
-        else if (resources.Wood < 5 && FarmlandAmount == PossibleFarmland)
+        else if (_resources.Wood < 5 && FarmlandAmount == PossibleFarmland)
         {
             return "You dont have enough wood and freeland to build farmland!!";
         }
-        else if (resources.Wood < 5)
+        else if (_resources.Wood < 5) 
         {
             return "You dont have enough wood to build farmland!!";
         }
@@ -52,72 +74,72 @@ public class Farmland : Room
         }
     }
 
-    public (string message, int sustainabilityChange) CutForest(Resources resources)
+    public string CutForest()
     {
         if (PossibleFarmland > FarmlandAmount)
         {
-            return ("There is freeland no need to cut more trees for now.", 0);
+            return "There is freeland no need to cut more trees for now.";
         }
 
-        if (resources.Trees <= 0)
+        if (_resources.Trees <= 0)
         {
-            return ("No trees left to cut.", 0);
+            return "No trees left to cut.";
         }
 
-        resources.Trees -= 5;
-        resources.Wood += 10;
+        _resources.Trees -= 5;
+        _resources.Wood += 10;
         PossibleFarmland += 1;
+        _resources.SustainabilityPoints += 10;
 
-        return ("You now have space for 1 more farmland.", -10);
+        return "You now have space for 1 more farmland.";
     }
 
-    public (string message, int sustainabilityChange) PlantFarmland(Resources resources)
+    public string PlantFarmland()
     {
-        if (FarmlandPlanted.Count < FarmlandAmount && resources.GrainSeeds >= 4)
+        if (FarmlandPlanted.Count < FarmlandAmount && _resources.GrainSeeds >= 4)
         {
-            FarmlandPlanted.Add(DataHandler.TotalTurns);
-            resources.GrainSeeds -= 4;
+            FarmlandPlanted.Add(1);
+            _resources.GrainSeeds -= 4;
+            _resources.SustainabilityPoints += 8;
 
-            return ($"You have planted 1 more farmland.\nNow you have {FarmlandPlanted} planted farmlands.", 8);
+            return $"You have planted 1 more farmland.\nNow you have {FarmlandPlanted.Count} planted farmlands.";
         }
         else
         {
-            if (FarmlandPlanted.Count < FarmlandAmount && resources.GrainSeeds >= 4)
+            if (FarmlandPlanted.Count == FarmlandAmount && _resources.GrainSeeds < 4)
             {
-                
-
-                return ("All your farmlands are planted and you dont have enough Grain seeds to plant a farmland", 0);
+                return "All your farmlands are planted and you dont have enough Grain seeds to plant a farmland";
             }
-            else if(FarmlandPlanted.Count == FarmlandAmount)
+            else if (FarmlandPlanted.Count == FarmlandAmount)
             {
-                return ("All your farmlands are planted.", 0);
+                return "All your farmlands are planted.";
             }
             else
             {
-                return ("You dont have enough Grain seeds to plant a farmland", 0);
+                return "You dont have enough Grain seeds to plant a farmland";
             }
         }
     }
 
-    public (string message, int sustainabilityChange) Harvest(Resources resources)
+    public string Harvest()
     {
         if (FarmlandRipped > 0)
         {
             FarmlandRipped -= 1;
-            resources.GrainSeeds += 1;
-            resources.Food += 4;
-            
-            return ($"Now you have {FarmlandRipped} ripped farmlands.", -4);
+            _resources.GrainSeeds += 1;
+            _resources.Food += 4;
+
+            return "Harvested! Now you have " + FarmlandRipped + " ripe farmlands left.";
         }
         else
         {
-            return ("None of your farmlands are ripped.", 0);
+            return "None of your farmlands are ripe yet.";
         }
     }
 
-    public void RipenFarmland()
+    public void RipenFarmland(int currentTurn)
     {
-        foreach (var farmland in FarmlandPlanted.Where(farmland => DataHandler.TotalTurns - farmland >= 4).ToList())
+        foreach (var farmland in FarmlandPlanted.Where(f => currentTurn - f >= 4).ToList())
         {
             FarmlandRipped += 1;
             FarmlandPlanted.Remove(farmland);

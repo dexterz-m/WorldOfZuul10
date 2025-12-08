@@ -7,20 +7,21 @@ namespace WorldOfZuul.Domain;
 
 public class DataHandler
 {
-    public static List<Room> Rooms = new List<Room?>();
-    public static List<Villager> Villagers = new List<Villager?>();
-    public static Resources Resources = new Resources();
-    public static List<Job> Jobs = new List<Job?>();
-    public static Advisor Advisor = new Advisor();
+    public List<Room> Rooms { get; private set; }
+    public List<Villager> Villagers { get; private set; }
+    public Resources Resources { get; private set; }
+    public List<Job> Jobs { get; private set; }
+    public Advisor Advisor { get; private set; }
     
-    public static Room CurrentRoom { get; private set; }
-
-    private int CurrentDay { get; set; }
-    public static int TurnsThisDay { get; set; }
-    public static int TotalTurns { get; set; }
+    public Room CurrentRoom { get; private set; }
+    public int CurrentDay { get; private set; }
+    public int TurnsThisDay { get; private set; }
+    public int TotalTurns { get; private set; }
+    
     private const int MaxTurnPerDay = 10;
     private const int MaxDay = 10;
-    private bool _continuePlaying = true; // moved to field so rooms can change it via requests
+    private bool _continuePlaying = true;
+    private bool _inAdvisorChat = false;
 
     public DataHandler(List<Room> rooms, List<Villager> villagers, Resources resources, Advisor advisor, List<Job> jobs)
     {
@@ -30,30 +31,179 @@ public class DataHandler
         Advisor = advisor;
         Jobs = jobs;
         CurrentRoom = FindRoomByName("Village");
+        CurrentDay = 1;
+        TurnsThisDay = 0;
+        TotalTurns = 0;
     }
 
-    public void ChangeRoom(string roomName)
+    // Main UI connector - single point of contact
+    public string HandleCommand(Command command)
     {
-        Room room = FindRoomByName(roomName);
-        CurrentRoom = room;
+        string ui;
+
+        if (command == null)
+        {
+            return "Invalid command.";
+        }
+
+        switch (command.Name)
+        {
+            case "ls":
+                ui = HandleList(command.SecondWord);
+                break;
+            case "cd":
+                ui = HandleChangeRoom(command.SecondWord);
+                break;
+            case "sleep":
+                ui = HandleSleep();
+                break;
+            case "quit":
+                ui = HandleQuit();
+                break;
+            case "talk":
+                ui = HandleTalk();
+                break;
+            default:
+                // Not a global command: pass it to the current room to handle
+                ui = CurrentRoom.RoomCommandHandler(command, Resources);
+                break;
+        }
+        return ui;
+    }
+
+    private string HandleList(string? type)
+    {
+        if (string.IsNullOrEmpty(type))
+        {
+            return "Please specify what to list: 'v' for villagers, 'j' for jobs, 'r' for rooms, 'i' for resources.";
+        }
+
+        return type.ToLower() switch
+        {
+            "v" => ListVillagers(),
+            "j" => ListJobs(),
+            "r" => ListRooms(),
+            "i" => ListResources(),
+            _ => "Unknown list type. Try: 'v' (villagers), 'j' (jobs), 'r' (rooms), 'i' (resources)."
+        };
+    }
+
+    private string ListVillagers()
+    {
+        string result = "";
+        foreach (var villager in Villagers)
+        {
+            var job = FindVillagerJob(villager);
+            result += $"ID: {villager.Id} | Name: {villager.Name} | Job: {job?.Name ?? "Unemployed"}\n";
+        }
+        return result;
+    }
+
+    private string ListJobs()
+    {
+        string result = "";
+        foreach (var job in Jobs)
+        {
+            result += $"ID: {job?.Id} | {job?.Name} | {job?.Description} | Assigned Villagers: {job?.Villagers?.Count ?? 0}\n";
+        }
+        return result;
+    }
+
+    private string ListRooms()
+    {
+        string result = "";
+        foreach (Room room in Rooms)
+        {
+            result += $"{room.ShortDescription}\n";
+        }
+        return result;
+    }
+
+    private string ListResources()
+    {
+        return $"Sustainability Points: {Resources.SustainabilityPoints}\n" +
+               $"Food: {Resources.Food}\n" +
+               $"Hunger: {Resources.Hunger}\n" +
+               $"Trees: {Resources.Trees}\n" +
+               $"Animals: {Resources.Animals}\n" +
+               $"Wood: {Resources.Wood}\n" +
+               $"Saplings: {Resources.Saplings}\n" +
+               $"GrainSeeds: {Resources.GrainSeeds}\n";
+    }
+
+    private string HandleChangeRoom(string? roomName)
+    {
+        try
+        {
+            Room room = FindRoomByName(roomName);
+            if (room == null)
+            {
+                return "Please specify a valid room name.";
+            }
+            CurrentRoom = room;
+            NextTurn();
+            return CurrentRoom.GetEnterRoomMessage();
+        }
+        catch (Exception ex)
+        {
+            return $"Could not change room: {ex.Message}";
+        }
+    }
+
+    private string HandleSleep()
+    {
+        int turnsLeft = MaxTurnPerDay - TurnsThisDay;
+        NextTurn(turnsLeft);
+        CurrentDay++;
+        TurnsThisDay = 0;
+        
+        return $"You slept through the rest of day {CurrentDay - 1}.\n" +
+               $"It is now Day {CurrentDay}.\n" +
+               $"Sustainability Points: {Resources.SustainabilityPoints}\n" +
+               ListResources();
+    }
+
+    private string HandleQuit()
+    {
+        _continuePlaying = false;
+        return "Thank you for playing! Final score:\n" + 
+               $"Days survived: {CurrentDay}\n" +
+               $"Sustainability Points: {Resources.SustainabilityPoints}\n" +
+               ListResources();
+    }
+
+    private string HandleTalk()
+    {
+        _inAdvisorChat = true;
+        NextTurn();
+        
+        if (!Advisor.IsIntroduced)
+        {
+            Advisor.MarkAsIntroduced();
+            return Advisor.GetIntroduction() + "\n\n" + Advisor.GetHelpText();
+        }
+        
+        return "You are talking with the advisor. What would you like to know?\n" + Advisor.GetHelpText();
     }
 
     public Room FindRoomByName(string roomName)
     {
         int id = -1;
 
-        foreach (Room rName in Rooms!)
+        foreach (var rName in Rooms!.Where(rName => roomName?.ToLower() == rName!.ShortDescription.ToLower()))
         {
-            if (roomName?.ToLower() == rName!.ShortDescription.ToLower())
-            {
-                id = Rooms.IndexOf(rName);
-            }
+            id = Rooms.IndexOf(rName);
         }
 
-        return Rooms[id];
+        if (id != -1 && id < Rooms.Count)
+        {
+            return Rooms[id];
+        }
+        else
+        {
+            return null;
+        }
     }
-
-
 
     public Villager? FindVillagerById(int id)
     {
@@ -65,111 +215,45 @@ public class DataHandler
         return Jobs.Find(j => j.Id == id);
     }
 
-    private void AssignVillager(int villagerId, int jobId)
+    public Job? FindVillagerJob(Villager villager)
     {
-        //var villager = Villagers?.FirstOrDefault(villager => villager.Id == villagerId);
-        //if (villager == null)
-        //{
-        //    Console.WriteLine($"No villager with ID {villagerId} found.");
-        //    return;
-        //}
-
-        //Job? targetJob = null;
-        //foreach (var room in Rooms)
-        //{
-        //    if (room?.Jobs == null) continue;
-        //    foreach (var job in room.Jobs.OfType<Job>().Where(job => job.Id == jobId))
-        //    {
-        //        targetJob = job;
-        //    }
-        //    if (targetJob != null) break;
-        //}
-
-        //if (targetJob == null)
-        //{
-        //    Console.WriteLine($"No job with ID {jobId} found.");
-        //    return;
-        //}
-
-        //foreach (var room in Rooms)
-        //{
-        //    if (room?.Jobs == null) continue;
-        //    foreach (var job in room.Jobs)
-        //    {
-        //        job?.Villagers?.Remove(villager);
-        //    }
-        //}
-
-        //if (targetJob.Villagers != null && targetJob.Villagers.Contains(villager))
-        //{
-        //    Console.WriteLine($"Villager with ID {villagerId} already assigned to {targetJob.Name}.");
-        //    return;
-        //}
-
-        //targetJob.AddVillager(villager);
-    }
-
-    string[] GetUiData(Command command)
-    {
-        switch (command.Name)
+        foreach (var job in Jobs)
         {
-            case "ls":
-                List(command.SecondWord == null ? null : Convert.ToChar(command.SecondWord));
-                break;
-            case "cd":
-                ChangeRoom(command.SecondWord);
-                break;
-            case "sleep":
-                var turnLeft = MaxTurnPerDay - TurnsThisDay;
-                Console.Clear();
-                NextTurn(turnLeft);
-                break;
-            case "quit":
-                _continuePlaying = false;
-                break;
-            case "talk":
-                _advisor.Talk();
-                NextTurn();
-                break;
-            default:
-                // Not a global command: pass it to the current room to handle
-                _currentRoom?.CommandList(command);
-                break;
+            if (job.Villagers?.Contains(villager) == true)
+            {
+                return job;
+            }
         }
-
-        return new string[] { }; // to do
+        return null;
     }
 
-    public IEnumerable<Job> GetAllJobs()
-    {
-        return Jobs;
-    }
-    public IEnumerable<Room> GetAllRooms()
-    {
-        return Rooms;
-    }
-    public IEnumerable<Villager> GetAllVillagers()
-    {
-        return Villagers;
-    }
-
-    public void Sleep()
-    {
-        var turnLeft = MaxTurnPerDay - TurnsThisDay;
-        Console.Clear();
-        NextTurn(turnLeft);
-    }
-
-    public static void NextTurn(int turns = 1)
+    public void NextTurn(int turns = 1)
     {
         TurnsThisDay += turns;
-        Farmland? farm = Rooms.FirstOrDefault(room => room?.ShortDescription == "Farmland") as Farmland;
-        Village? village = Rooms.FirstOrDefault(room => room?.ShortDescription == "Village") as Village;
-        for (int i = 0; i < turns; i++)
+        TotalTurns += turns;
+        
+        // Process turn-based events
+        Resources.Hunger += turns * 5; // Hunger increases each turn
+        
+        // Apply job work
+        foreach (var job in Jobs)
         {
-            village?.FoodLoss();
-            farm?.RipenFarmland();
-            Resources.TurnToTrees();
+            if (job.Villagers?.Count > 0)
+            {
+                job.Work();
+            }
         }
+        
+        // Process farmland ripening
+        var farmland = Rooms.FirstOrDefault(r => r is Farmland) as Farmland;
+        farmland?.RipenFarmland(TotalTurns);
+        
+        // Check for game over conditions
+        if (CurrentDay >= MaxDay)
+        {
+            _continuePlaying = false;
+        }
+        
     }
+
 }

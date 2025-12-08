@@ -40,6 +40,11 @@ public class Room : IRoom
         return "No specific commands available in this room.";
     }
 
+    public virtual string RoomCommandHandler(Command command, Resources resources)
+    {
+        return $"Command '{command.Name}' not recognized in this room.";
+    }
+
     public void SetExit(string direction, Room neighbor)
     {
         Exits[direction] = neighbor;
