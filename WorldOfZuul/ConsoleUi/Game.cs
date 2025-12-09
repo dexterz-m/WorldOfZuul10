@@ -68,11 +68,8 @@ namespace WorldOfZuul.ConsoleUi
                     }
 
                     // Handle global commands here so they work from any room
-                    foreach (string s in dh.GetUiData(command))
-                    {
-                        Console.WriteLine(s);
-                    }
-                    
+                    Console.WriteLine(dh.HandleCommand(command));
+
 
 
                     // Prevent SustainabilityPoints from going negative

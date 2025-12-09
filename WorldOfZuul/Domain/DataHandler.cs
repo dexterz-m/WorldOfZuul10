@@ -23,6 +23,7 @@ public class DataHandler
     private bool _continuePlaying = true;
     private bool _inAdvisorChat = false;
 
+    // Parameter changed for Game.cs
     public DataHandler(List<Room> rooms, List<Villager> villagers, Resources resources, Advisor advisor, List<Job> jobs)
     {
         Rooms = rooms;
