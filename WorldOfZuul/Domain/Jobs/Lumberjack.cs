@@ -11,6 +11,11 @@ public class Lumberjack : Job
         _treesCutDownPerTurn = treesCutDownPerTurn;
     }
 
+    public Lumberjack(int id, string name, string description) : base(id, name, description)
+    {
+
+    }
+
     public int GetResourceGainedPerTurn() => _resourceGainedPerTurn;
     public int GetTreesCutDownPerTurn() => _treesCutDownPerTurn;
 

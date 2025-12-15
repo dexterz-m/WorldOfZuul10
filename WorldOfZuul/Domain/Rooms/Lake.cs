@@ -29,6 +29,7 @@ public class Lake : Room
             default:
                 return "Invalid command for lake.";
         }
+    }
 
 
     public string GetLakeStats(Resources resources)
@@ -81,7 +82,7 @@ public class Lake : Room
         }
         else
         {
-            return "There are no fishes to catch!");
+            return "There are no fishes to catch!";
         }
     }
 

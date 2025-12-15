@@ -7,7 +7,7 @@ public class Room : IRoom
 {
     public string ShortDescription { get; private set; }
     public string LongDescription { get; private set; }
-    public Dictionary<string, Room> Exits { get; private set; } = new();
+    //public Dictionary<string, Room> Exits { get; private set; } = new();
     public List<Job?> Jobs { get; private set; } = new List<Job?>();
 
     protected Room(string shortDesc, string longDesc)
@@ -45,13 +45,4 @@ public class Room : IRoom
         return $"Command '{command.Name}' not recognized in this room.";
     }
 
-    public void SetExit(string direction, Room neighbor)
-    {
-        Exits[direction] = neighbor;
-    }
-
-    public Room? GetExit(string direction)
-    {
-        return Exits.GetValueOrDefault(direction);
-    }
 }

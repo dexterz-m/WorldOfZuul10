@@ -33,7 +33,6 @@ public class Farmland : Room
 
     public override string RoomCommandHandler(Command command, Resources resources)
     {
-        string result;
 
         _resources = resources;
 

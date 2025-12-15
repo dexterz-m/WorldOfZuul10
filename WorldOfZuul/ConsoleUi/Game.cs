@@ -32,10 +32,11 @@ namespace WorldOfZuul.ConsoleUi
         {
             
         }
-        public void Play(IDataInitializer initializer)
+        public void Play(DataInitializer initializer)
         {
-            ListUiTemplate listUi = new ListUiTemplate();
+            
             DataHandler dh = new DataHandler(initializer);
+            ListUiTemplate listUi = new ListUiTemplate(dh);
             Parser parser = new();
 
             // -- PrintWelcome();
@@ -83,9 +84,7 @@ namespace WorldOfZuul.ConsoleUi
             }
 
             Console.WriteLine("Thank you for playing World of Zuul!");
-        }
-        
-        
+        }        
 
     }
 }

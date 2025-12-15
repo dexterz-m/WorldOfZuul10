@@ -6,12 +6,15 @@ namespace WorldOfZuul.ConsoleUi.Templates;
 
 public class ListUiTemplate
 {
-    IDataInitializer _initializer = new DataInitializer(Directory.GetCurrentDirectory());
-    
+    private DataHandler handler;
+    public ListUiTemplate(DataHandler dataHandler)
+    {
+        handler = dataHandler;
+    }
 
     public void List(char? type)
     {
-        DataHandler handler = new DataHandler(_initializer);
+        
         switch (type)
         {
             case 'v':

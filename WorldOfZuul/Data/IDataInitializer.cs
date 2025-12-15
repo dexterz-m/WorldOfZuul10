@@ -7,10 +7,8 @@ namespace WorldOfZuul.Data;
 
 public interface IDataInitializer
 {
-    public List<Job> LoadJobs();
-    public List<Room> LoadRooms();
-    public List<string> LoadCommands();
-    public List<Villager> LoadVillagers();
-    public Advisor LoadAdvisor();
-    
+    public List<Job> jobs { get; }
+    public List<Room> rooms { get; }
+    public List<Villager> villagers { get; }
+    public Resources resources { get; }
 }

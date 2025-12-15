@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using WorldOfZuul.Data;
 using WorldOfZuul.Domain.CommandHandler;
 using WorldOfZuul.Domain.Jobs;
 using WorldOfZuul.Domain.Rooms;
@@ -11,8 +12,8 @@ public class DataHandler
     public List<Villager> Villagers { get; private set; }
     public Resources Resources { get; private set; }
     public List<Job> Jobs { get; private set; }
-    public Advisor Advisor { get; private set; }
-    
+    public Advisor Advisor { get; private set; } = new Advisor();
+
     public Room CurrentRoom { get; private set; }
     public int CurrentDay { get; private set; }
     public int TurnsThisDay { get; private set; }
@@ -24,13 +25,12 @@ public class DataHandler
     private bool _inAdvisorChat = false;
 
     // Parameter changed for Game.cs
-    public DataHandler(List<Room> rooms, List<Villager> villagers, Resources resources, Advisor advisor, List<Job> jobs)
+    public DataHandler(IDataInitializer dataInitializer)
     {
-        Rooms = rooms;
-        Villagers = villagers;
-        Resources = resources;
-        Advisor = advisor;
-        Jobs = jobs;
+        Rooms = dataInitializer.rooms;
+        Villagers = dataInitializer.villagers;
+        Resources = dataInitializer.resources;
+        Jobs = dataInitializer.jobs;
         CurrentRoom = FindRoomByName("Village");
         CurrentDay = 1;
         TurnsThisDay = 0;

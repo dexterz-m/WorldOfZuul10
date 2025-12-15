@@ -85,10 +85,31 @@ namespace WorldOfZuul
     {
         public static void Main()
         {
-            IDataInitializer dataInitializer = new DataInitializer(Directory.GetCurrentDirectory());
+
+            DataInitializer dataInitializer = new DataInitializer();
             Game game = new Game();
             game.Play(dataInitializer);
         }
+
+
+        private static string ResolveFromUpperDirs(string suffixRelativePath)
+        {
+            // start: katalog uruchomieniowy (bin/Debug/... albo publish)
+            var dir = AppContext.BaseDirectory;
+
+            while (dir is not null)
+            {
+                var candidate = Path.Combine(dir, suffixRelativePath);
+                if (Directory.Exists(candidate))
+                    return candidate;
+
+                dir = Directory.GetParent(dir)?.FullName;
+            }
+
+            throw new DirectoryNotFoundException(
+                $"Nie znaleziono katalogu: {suffixRelativePath} w żadnym z katalogów nadrzędnych od {AppContext.BaseDirectory}");
+        }
+
     }
 }
 
