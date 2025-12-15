@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Threading.Tasks;
 
 namespace WorldOfZuul.RoomType
 {
@@ -33,7 +34,12 @@ namespace WorldOfZuul.RoomType
                 switch (command.Name)
                 {
                     case "catch":
-                        await CatchFish();
+                        _ = CatchFish().ContinueWith(t =>
+                        {
+                            if (t.Exception != null){
+                                Console.WriteLine("Error: " + t.Exception.InnerException.Message);
+                            }
+                        }, TaskContinuationOptions.OnlyOnFaulted);
                         break;
                     case "feed":
                         await FeedFish();
@@ -52,96 +58,66 @@ namespace WorldOfZuul.RoomType
 
         private async Task CatchFish()
         {
+            if (Game.TurnsThisDay >= 10)
+            {
+                Console.WriteLine("You don't have enough turns left today!");
+                return;
+            }
+
+            int randTurns;
+
             switch (Fish)
             {
                 case >= 10:
-                {
                     Console.WriteLine("There's a lot of fish!");
                     Console.WriteLine("You started fishing...");
-                    int waitTime = Rnd.Next(3000, 10000);
-                    
-                    await Task.Delay(waitTime);
 
-                    if (Rnd.NextDouble() <= 0.95)// 95% chance to catch fish
-                    {
-                        
-                        Console.WriteLine("You caught a fish!");
-
-                        Fish--;
-                        Game.Resources.Food += 1;
-
-                        Console.WriteLine($"Now you have {Game.Resources.Food} food.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("You didn't catch any fish this time.");
-                    }
-                    Game.NextTurn();
+                    randTurns = 1;
 
                     break;
-                }
+                
                 case > 5:
-                {
-                    Console.WriteLine("Looks like lake is evenly populated!");
-
+                    Console.WriteLine("Looks like the lake is evenly populated!");
                     Console.WriteLine("You started fishing...");
-                    int waitTime = Rnd.Next(7000, 15000);
-
-                    await Task.Delay(waitTime);
                     
-                    if (Rnd.NextDouble() <= 0.75) // 75% chance to catch fish
-                    {
-                        Console.WriteLine("You caught a fish!");
-
-                        Fish--;
-                        Game.Resources.Food += 1;
-
-                        Console.WriteLine($"Now you have {Game.Resources.Food} food.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("You didn't catch any fish this time.");
-                    }
-                    Game.NextTurn();
-
+                    randTurns = Rnd.Next(1, 3); // 1–2 turns
+                    
                     break;
-                }
+
                 case > 0:
-                {
-                    Console.WriteLine("Seems like there are not much fish left!");
-
+                    Console.WriteLine("Seems like not much fish left!");
                     Console.WriteLine("You started fishing...");
-                    int waitTime = Rnd.Next(10000, 20000);
 
-                    await Task.Delay(waitTime);
-                    
-                    if (Rnd.NextDouble() <= 0.25) // 25% chance to catch fish
-                    {
-                        Console.WriteLine("You caught a fish!");
+                    randTurns = Rnd.Next(2, 4); // 2–3 turns
 
-                        Fish--;
-                        Game.Resources.Food += 1;
-
-                        Console.WriteLine($"Now you have {Game.Resources.Food} food.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("You didn't catch any fish this time.");
-                    }
-
-                    Console.WriteLine("You caught a fish!");
-
-                    Fish--;
-                    Game.Resources.Food += 1;
-
-                    Console.WriteLine($"Now you have {Game.Resources.Food} food.");
-                    Game.NextTurn();
                     break;
-                }
+
                 default:
                     Console.WriteLine("There are no fishes to catch!");
-                    break;
+
+                    return;
             }
+
+            double catchChance = Fish >= 10 ? 0.95 : // chance to catch fish
+                                 Fish > 5   ? 0.75 :
+                                              0.25;
+
+            bool success = Rnd.NextDouble() <= catchChance;
+
+            if (success)
+            {
+                Console.WriteLine("You caught a fish!");
+                Fish--;
+                Game.Resources.Food++;
+                Console.WriteLine($"You now have {Game.Resources.Food} food.");
+            }
+            else
+            {
+                Console.WriteLine("You didn't catch any fish this time.");
+            }
+
+            Console.WriteLine($"{randTurns} turn(s) used.");
+            Game.NextTurn(randTurns);
         }
 
         private async Task FeedFish()
