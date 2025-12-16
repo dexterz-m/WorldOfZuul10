@@ -1,4 +1,5 @@
-﻿using WorldOfZuul.ConsoleUi;
+﻿using System.Resources;
+using WorldOfZuul.ConsoleUi;
 using WorldOfZuul.Domain.CommandHandler;
 
 namespace WorldOfZuul.Domain.Rooms;
@@ -14,7 +15,14 @@ public class Lake : Room
 
     public override string GetEnterRoomMessage()
     {
-        return "You have arrived at the lake.";
+        return "You have arrived at the lake.\n\n" +
+               "Below are the current stats:\n" +
+               $"Fish in the lake: {Fish}\n" +
+               $"Grain seeds in your pocket: {_resources.GrainSeeds}\n\n" +
+               "Available actions:\n" +
+               " - catch fish  : Catch fish\n" +
+               " - feed fish   : Feed fish\n\n" +
+               "Type a command to perform the action.";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)

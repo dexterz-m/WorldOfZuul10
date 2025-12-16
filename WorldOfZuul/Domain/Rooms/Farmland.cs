@@ -18,7 +18,7 @@ public class Farmland : Room
 
     public override string GetEnterRoomMessage()
     {
-        return "You have entered the Farmland. Below are the current stats:\n" +
+        return "You have entered the Farmland.\n\nBelow are the current stats:\n" +
                $"Farmlands: {FarmlandAmount}\n" +
                $"Free farmlands: {PossibleFarmland - FarmlandAmount}\n" +
                $"Planted farmlands: {FarmlandPlanted.Count}\n" +
@@ -28,7 +28,7 @@ public class Farmland : Room
                " - cut forest               : Cut 5 trees to make freeland (reduces sustainability)\n" +
                " - plant farmland           : Plant on your farmland\n" +
                " - harvest                  : Harvest your ripe farmland\n\n" +
-               "Type a command to perform the action.\n";
+               "Type a command to perform the action.";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)

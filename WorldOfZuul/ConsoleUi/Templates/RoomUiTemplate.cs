@@ -21,9 +21,12 @@ public class RoomUiTemplate
         Console.WriteLine($"You are in: {dh.CurrentRoom?.ShortDescription}");
         Console.WriteLine();
         
-        Console.WriteLine($"{dh.CurrentRoom?.LongDescription}");
+        
+        Console.WriteLine(dh.CurrentRoom?.GetEnterRoomMessage());
 
-        dh.CurrentRoom?.GetEnterRoomMessage();
+        // Console.WriteLine($"{dh.CurrentRoom?.LongDescription}");
+
+        //dh.CurrentRoom?.GetEnterRoomMessage();
 
 
     }

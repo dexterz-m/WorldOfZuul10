@@ -22,14 +22,11 @@ public class Village : Room
                $"Villagers: {Villagers.Count}\n" +
                $"Houses: {Houses}\n\n" +
                "Here are available commands\n" +
-               "ls v                                   List out all villagers and their status\n" +
-               "ls r                                   List out all rooms\n" +
-               "ls j                                   List out all jobs\n" +
-               "cd [ROOM NAME]                         Goes to room\n\n" +
-               "feed [VILLAGER ID] [AMOUNT]            Feeds villager and activates it\n" +
-               "assign [VILLAGER ID] [JOB ID]          Assigns villager to a task\n" +
-               "help                                   Show help\n" +
-               "sleep                                  Skip the remaining moves\n";
+               " - feed [VILLAGER ID] [AMOUNT]           : Feeds villager and activates it\n" +
+               " - assign [VILLAGER ID] [JOB ID]         : Assigns villager to a task\n" +
+               " - help                                  : Show help\n" +
+               " - sleep                                 : Skip the remaining moves\n\n" +
+               "Type a command to perform the action."; ;
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)

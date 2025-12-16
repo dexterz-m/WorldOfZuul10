@@ -21,12 +21,12 @@ public class MainUiTemplate
         Console.WriteLine();
 
         Console.WriteLine("General Commands:");
-        Console.WriteLine("ls v                                   List out all villagers and their status");
-        Console.WriteLine("ls r                                   List out all rooms");
-        Console.WriteLine("ls j                                   List out all jobs");
-        Console.WriteLine("cd [ROOM NAME]                         Goes to room");
-        Console.WriteLine();
-
+        Console.WriteLine(" - ls v                                 : List out all villagers and their status");
+        Console.WriteLine(" - ls r                                 : List out all rooms");
+        Console.WriteLine(" - ls j                                 : List out all jobs");
+        Console.WriteLine(" - cd [ROOM NAME]                       : Goes to room\n");
+        Console.WriteLine("Type a command to perform the action.\n");
+        
     }
     // How it should look:
     /*

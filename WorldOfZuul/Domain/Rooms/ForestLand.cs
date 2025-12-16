@@ -1,4 +1,5 @@
-﻿using WorldOfZuul.ConsoleUi;
+﻿using System.Resources;
+using WorldOfZuul.ConsoleUi;
 using WorldOfZuul.Domain.CommandHandler;
 using WorldOfZuul.Domain.Jobs;
 
@@ -15,7 +16,15 @@ public class Forest : Room
 
     public override string GetEnterRoomMessage()
     {
-        return "You have entered the Forest.";
+        return "You have entered the Forest.\n\n" +
+               "Below are the current stats:\n" +
+               $"Trees: {_resources.Trees}\n" +
+               $"Animals: {_resources.Animals}\n\n" +
+               "Available actions:\n" +
+               " - cut    : Cut down one tree (reduces sustainability)\n" +
+               " - plant  : Plant a tree (increases sustainability)\n" +
+               " - kill   : Kill one animal (reduces sustainability)\n\n" +
+               "Type a command to perform the action.";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)

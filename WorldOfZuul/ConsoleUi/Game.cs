@@ -47,9 +47,10 @@ namespace WorldOfZuul.ConsoleUi
             while (_continuePlaying && _currentDay <= MaxDay)
             {
                 CurrentTurn = 0;
+                //mainUiTemplate.RenderMain(_currentDay, MaxDay, CurrentTurn, MaxTurnPerDay, dh);
                 while (_continuePlaying && CurrentTurn <= MaxTurnPerDay)
                 {
-                    
+                    //mainUiTemplate.RenderMain(_currentDay, MaxDay, CurrentTurn, MaxTurnPerDay, dh);
                     Console.Write("> ");
 
                     var input = Console.ReadLine();

@@ -11,7 +11,12 @@ public class School : Room
 
     public override string GetEnterRoomMessage()
     {
-        return "You have entered the School. Learn about sustainability here.";
+        return "You have entered the School. Learn about sustainability here.\n\n" +
+               "Available actions:\n" +
+               " - about : Learn about the project\n" +
+               " - learn : Learn about sustainability\n" +
+               " - read  : Read about sustainability\n\n" +
+               "Type a command to perform the action.";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)
@@ -21,8 +26,9 @@ public class School : Room
             case "about":
                 return AboutProject();
             case "learn":
-            case "read":
                 return LearnSustainability();
+            case "read":
+                
             default:
                 return "Invalid command in the school. Try 'about' or 'learn'.";
         }

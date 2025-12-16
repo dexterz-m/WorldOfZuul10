@@ -143,6 +143,7 @@ public class DataHandler
             }
             CurrentRoom = room;
             NextTurn();
+            Console.Clear();
             return CurrentRoom.GetEnterRoomMessage();
         }
         catch (Exception ex)
