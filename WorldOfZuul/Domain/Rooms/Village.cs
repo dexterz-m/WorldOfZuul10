@@ -1,4 +1,5 @@
-﻿using WorldOfZuul.ConsoleUi;
+﻿using System;
+using System.Linq;
 using WorldOfZuul.Domain.CommandHandler;
 using WorldOfZuul.Domain.Jobs;
 
@@ -6,10 +7,7 @@ namespace WorldOfZuul.Domain.Rooms;
 
 public class Village : Room
 {
-    private static List<Villager> Villagers { get; set; } = new List<Villager>();
     private int Houses { get; set; } = 5;
-
-    private Resources _resources = new Resources();
 
     public Village(string shortDesc, string longDesc) : base(shortDesc, longDesc)
     {
@@ -17,16 +15,18 @@ public class Village : Room
 
     public override string GetEnterRoomMessage()
     {
+        var dh = DataHandler.Instance;
+        int villagerCount = dh?.Villagers?.Count ?? 0;
+
         return $"You have entered the Village.\n\n" +
                "Below are the current stats:\n" +
-               $"Villagers: {Villagers.Count}\n" +
+               $"Villagers: {villagerCount}\n" +
                $"Houses: {Houses}\n\n" +
                "Here are available commands\n" +
-               " - feed [VILLAGER ID] [AMOUNT]           : Feeds villager and activates it\n" +
+               " - feed [VILLAGER ID] [AMOUNT]           : Feeds villager\n" +
                " - assign [VILLAGER ID] [JOB ID]         : Assigns villager to a task\n" +
-               " - help                                  : Show help\n" +
-               " - sleep                                 : Skip the remaining moves\n\n" +
-               "Type a command to perform the action."; ;
+               " - cook [AMOUNT]                         : Converts grain to food\n\n" +
+               "Type a command to perform the action.";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)
@@ -34,142 +34,145 @@ public class Village : Room
         switch (command.Name)
         {
             case "feed":
-                FeedVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord ?? "1"));
-                break;
+            {
+                if (string.IsNullOrWhiteSpace(command.SecondWord))
+                    return "Usage: feed [VILLAGER ID] [AMOUNT]";
+
+                if (!int.TryParse(command.SecondWord, out int villagerId))
+                    return "Villager ID must be a number.";
+
+                int amount = 1;
+                if (!string.IsNullOrWhiteSpace(command.ThirdWord) && !int.TryParse(command.ThirdWord, out amount))
+                    return "Amount must be a number.";
+
+                return FeedVillager(villagerId, amount);
+            }
             case "assign":
-                //if (AssignVillager(Convert.ToInt32(command.SecondWord), Convert.ToInt32(command.ThirdWord))) Game.NextTurn();
-                break;
+            {
+                if (string.IsNullOrWhiteSpace(command.SecondWord) || string.IsNullOrWhiteSpace(command.ThirdWord))
+                    return "Usage: assign [VILLAGER ID] [JOB ID]";
+
+                if (!int.TryParse(command.SecondWord, out int villagerId))
+                    return "Villager ID must be a number.";
+
+                if (!int.TryParse(command.ThirdWord, out int jobId))
+                    return "Job ID must be a number.";
+
+                return AssignVillager(villagerId, jobId);
+            }
             case "cook":
-                Cook(Convert.ToInt32(command.SecondWord ?? "1"));
-                break;
+            {
+                int amount = 1;
+                if (!string.IsNullOrWhiteSpace(command.SecondWord) && !int.TryParse(command.SecondWord, out amount))
+                    return "Amount must be a number.";
+
+                return Cook(resources, amount);
+            }
             default:
-                Console.WriteLine("I don't know what command.");
-                break;
+                return "Invalid command in the village.";
         }
-
-        return "Village";
     }
-
-
 
     private string FeedVillager(int villagerId, int foodAmount)
     {
-        var villager = Villagers.FirstOrDefault(villager => villager.Id == villagerId);
+        var dh = DataHandler.Instance;
+        if (dh == null) return "Game data not initialized.";
+
+        var villager = dh.FindVillagerById(villagerId);
+        if (villager == null) return $"No villager with ID {villagerId} found.";
+
+        int beforeFood = dh.Resources.Food;
+        int beforeHunger = villager.Hunger;
+
+        villager.Feed(foodAmount);
+
+        int afterFood = dh.Resources.Food;
+        int afterHunger = villager.Hunger;
+
+        int foodUsed = beforeFood - afterFood;
+        return $"Fed villager {villager.Id}. Food used: {foodUsed}. Hunger: {beforeHunger} -> {afterHunger}.";
+    }
+
+    private string AssignVillager(int villagerId, int jobId)
+    {
+        var dh = DataHandler.Instance;
+        if (dh == null) return "Game data not initialized.";
+
+        var villager = dh.FindVillagerById(villagerId);
         if (villager == null)
         {
             return $"No villager with ID {villagerId} found.";
         }
-        //Game.NextTurn();
-        //villager.Feed(foodAmount);
-        return $"Villager {villager.Id} has been fed {foodAmount} food. Current hunger: villager.Hunger.";
-    }
 
-    //private string AssignVillager(int villagerId, int jobId)
-    //{
-    //    var villager = Villagers.FirstOrDefault(villager => villager.Id == villagerId);
-    //    if (villager == null)
-    //    {
-            
-    //        return $"No villager with ID {villagerId} found.";
-    //    }
-    //    //if (!villager.CanWork && jobId != 0)
-    //    //{
-    //    //    return $"Villager with ID {villagerId} is not able to work. Try feeding them first.";
-    //    //}
-
-    //    Job? targetJob = null;
-    //    foreach (var room in Game.Rooms) //this must be handled better later
-    //    {
-    //        if (room?.Jobs == null) continue;
-    //        foreach (var job in room.Jobs.Where(job => job?.Id == jobId))
-    //        {
-    //            targetJob = job;
-    //        }
-    //        if (targetJob != null) break;
-    //    }
-
-    //    if (targetJob == null)
-    //    {           
-    //        return $"No job with ID {jobId} found.";
-    //    }
-         
-    //    foreach (var room in DataHandler.Rooms) //this must be handled better later
-    //    {
-    //        if (room?.Jobs == null) continue;
-    //        foreach (var job in room.Jobs)
-    //        {
-    //            job?.Villagers?.Remove(villager);
-    //        }
-    //    }
-
-    //    if (targetJob.Villagers != null && targetJob.Villagers.Contains(villager))
-    //    {
-    //        return $"Villager with ID {villagerId} already assigned to {targetJob.Name}.";
-    //    }
-
-    //    targetJob.AddVillager(villager);
-    //    return "Villager assigned";
-    //}
-
-    private string Cook(int amount)
-    {
-        if (_resources.GrainSeeds < amount)
+        if (!villager.CanWork && jobId != 0)
         {
-            return $"Not enough grains to cook {amount} food. You have {_resources.GrainSeeds} grains.";
-        }
-        _resources.GrainSeeds -= amount;
-        _resources.Food += amount;
-        //Game.NextTurn();
-
-        return $"Cooked {amount} food. You now have {_resources.Food} food and {_resources.GrainSeeds} grains left.";
-    }
-
-    public void CreateVillagers(int numberOfVillagers = 3)
-    {
-        for (int i = 0; i < numberOfVillagers; i++)
-        {
-            var villager = new Villager(i + 1, $"Villager {i + 1}");
-            Villagers.Add(villager);
+            return $"Villager with ID {villagerId} is not able to work. Try feeding them first.";
         }
 
-        // Assign all villagers to unemployed job initially
-        foreach (var villager in Villagers)
+        var targetJob = dh.FindJobById(jobId);
+        if (targetJob == null)
         {
-            //AssignVillager(villager.Id, 0);
+            return $"No job with ID {jobId} found.";
+        }
+
+        foreach (var job in dh.Jobs)
+        {
+            job?.Villagers?.RemoveAll(v => v.Id == villagerId);
+        }
+
+        if (targetJob.Villagers != null && targetJob.Villagers.Any(v => v.Id == villagerId))
+        {
+            return $"Villager with ID {villagerId} already assigned to {targetJob.Name}.";
+        }
+
+        targetJob.AddVillager(villager);
+        return $"Villager {villagerId} assigned to {targetJob.Name}.";
+    }
+
+    private string Cook(Resources resources, int amount)
+    {
+        if (amount <= 0) return "Amount must be greater than 0.";
+
+        if (resources.GrainSeeds < amount)
+        {
+            return $"Not enough grains to cook {amount} food. You have {resources.GrainSeeds} grains.";
+        }
+
+        resources.GrainSeeds -= amount;
+        resources.Food += amount;
+
+        return $"Cooked {amount} food. You now have {resources.Food} food and {resources.GrainSeeds} grains left.";
+    }
+
+    public void FoodLoss()
+    {
+        var dh = DataHandler.Instance;
+        if (dh == null) return;
+
+        foreach (var villager in dh.Villagers)
+        {
+            bool justBecameUnable = villager.Starve(2);
+            if (justBecameUnable)
+            {
+                AssignVillager(villager.Id, 0);
+            }
         }
     }
 
-    public void FoodLoss() // this must be called differently
+    public void ListVillagers()
     {
-        //foreach (var villager in Villagers)
-        //{
-        //    bool canWork = villager.Starve(2);
-        //    if (!canWork) continue;
-        //    Console.WriteLine($"Villager {villager.Id} is too hungry to work!");
-        //    //AssignVillager(villager.Id, 0);
-        //}
-    }
+        var dh = DataHandler.Instance;
+        if (dh == null) return;
 
-    public void ListVillagers() // this must be called differently
-    {
+        Console.WriteLine("+----+------------+--------+----------+--------------+");
+        Console.WriteLine("| ID |    Name    | Hunger | Can Work |     Job      |");
+        Console.WriteLine("+----+------------+--------+----------+--------------+");
 
-        //Console.WriteLine("+----+------------+--------+----------+");
-        //Console.WriteLine("| ID |    Name    | Hunger | Can Work |");
-        //foreach (var villager in Villagers)
-        //{
-        //    Console.WriteLine("+----+------------+--------+----------+");
-        //    Console.Write($"| {villager.Id,2} | {villager.Name,10} | ");
-        //    Console.BackgroundColor = villager.Hunger <= 25 ? ConsoleColor.Red : ConsoleColor.DarkGreen;
-        //    Console.ForegroundColor = ConsoleColor.White;
-        //    Console.Write($"{villager.Hunger,6}");
-        //    Console.ResetColor();
-        //    Console.Write(" | ");
-        //    Console.BackgroundColor = !villager.CanWork ? ConsoleColor.Red : ConsoleColor.DarkGreen;
-        //    Console.ForegroundColor = ConsoleColor.White;
-        //    Console.Write($"{villager.CanWork,8}");
-        //    Console.ResetColor();
-        //    Console.WriteLine(" |");
-        //    Console.WriteLine("+----+------------+--------+----------+");
-        //}
+        foreach (var villager in dh.Villagers)
+        {
+            Job? job = dh.FindVillagerJob(villager);
+            Console.WriteLine($"| {villager.Id,2} | {villager.Name,10} | {villager.Hunger,6} | {villager.CanWork,8} | {job?.Name ?? "Unemployed",12} |");
+            Console.WriteLine("+----+------------+--------+----------+--------------+");
+        }
     }
 }

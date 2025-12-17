@@ -5,6 +5,7 @@ namespace WorldOfZuul.Domain.Rooms;
 public class School : Room
 {
     private Resources _resources = new Resources();
+
     public School(string shortDesc, string longDesc) : base(shortDesc, longDesc)
     {
     }
@@ -21,14 +22,14 @@ public class School : Room
 
     public override string RoomCommandHandler(Command command, Resources resources)
     {
+        _resources = resources;
+
         switch (command.Name)
         {
             case "about":
                 return AboutProject();
             case "learn":
                 return LearnSustainability();
-            case "read":
-                
             default:
                 return "Invalid command in the school. Try 'about' or 'learn'.";
         }

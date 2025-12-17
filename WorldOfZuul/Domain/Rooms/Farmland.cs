@@ -33,7 +33,6 @@ public class Farmland : Room
 
     public override string RoomCommandHandler(Command command, Resources resources)
     {
-
         _resources = resources;
 
         switch (command.Name)
@@ -41,7 +40,7 @@ public class Farmland : Room
             case "build":
                 return BuildFarmland();
             case "cut":
-                return CutForest();               
+                return CutForest();
             case "harvest":
                 return Harvest();
             case "plant":
@@ -63,7 +62,7 @@ public class Farmland : Room
         {
             return "You dont have enough wood and freeland to build farmland!!";
         }
-        else if (_resources.Wood < 5) 
+        else if (_resources.Wood < 5)
         {
             return "You dont have enough wood to build farmland!!";
         }
@@ -97,7 +96,8 @@ public class Farmland : Room
     {
         if (FarmlandPlanted.Count < FarmlandAmount && _resources.GrainSeeds >= 4)
         {
-            FarmlandPlanted.Add(1);
+            int plantedAt = DataHandler.Instance?.TotalTurns ?? 0;
+            FarmlandPlanted.Add(plantedAt);
             _resources.GrainSeeds -= 4;
             _resources.SustainabilityPoints += 8;
 

@@ -1,19 +1,22 @@
-﻿namespace WorldOfZuul.Domain;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace WorldOfZuul.Domain;
 
 public class Resources
 {
     public int SustainabilityPoints { get; set; }
 
-    // Food and farming variables
     private int _food = 10;
     private int _grainSeeds = 2;
     private int _hunger = 0;
 
-    // animals and forest variables 
     private int _animals = 100;
     private int _trees = 100;
     private int _wood = 0;
     private int _saplings = 0;
+
+    private List<int> _plantedSaplings = new List<int>();
 
     public int Food
     {
@@ -55,5 +58,28 @@ public class Resources
     {
         get => _saplings;
         set => _saplings = value;
+    }
+
+    public bool TryPlantSapling(int currentTurn)
+    {
+        if (Saplings <= 0) return false;
+        Saplings -= 1;
+        _plantedSaplings.Add(currentTurn);
+        return true;
+    }
+
+    public int TurnToTrees(int currentTurn)
+    {
+        int grown = 0;
+
+        foreach (var plantedAt in _plantedSaplings.Where(t => currentTurn - t >= 3).ToList())
+        {
+            Trees += 1;
+            SustainabilityPoints += 1;
+            _plantedSaplings.Remove(plantedAt);
+            grown++;
+        }
+
+        return grown;
     }
 }

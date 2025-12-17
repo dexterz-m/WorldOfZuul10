@@ -1,6 +1,4 @@
-﻿using System.Resources;
-using WorldOfZuul.ConsoleUi;
-using WorldOfZuul.Domain.CommandHandler;
+﻿using WorldOfZuul.Domain.CommandHandler;
 using WorldOfZuul.Domain.Jobs;
 
 namespace WorldOfZuul.Domain.Rooms;
@@ -29,7 +27,6 @@ public class Forest : Room
 
     public override string RoomCommandHandler(Command command, Resources resources)
     {
-
         _resources = resources;
 
         switch (command.Name)
@@ -44,7 +41,6 @@ public class Forest : Room
                 return "Invalid command in the forest.";
         }
     }
-
 
     public string GetForestStats(Resources resources, int sustainabilityPoints)
     {
@@ -71,34 +67,27 @@ public class Forest : Room
         _resources.Saplings += amount * Rng.Next(1, 4);
         _resources.SustainabilityPoints -= 2;
 
-
         if (_resources.Animals > 0)
         {
-            int animalsLost = Rng.Next(1, 4); // picks 1, 2 or 3
-            animalsLost = Math.Min(animalsLost, _resources.Animals); // don't remove more than exist
+            int animalsLost = Rng.Next(1, 4);
+            animalsLost = Math.Min(animalsLost, _resources.Animals);
             _resources.Animals -= animalsLost;
-
-            // Each lost animal reduces SustainabilityPoints by 1 (weight can be adjusted)
             _resources.SustainabilityPoints -= animalsLost;
         }
 
-        string message = $"You cut {amount} tree(s). Consider planting a tree to maintain ecosystem balance.";
-
-        return message;
+        return $"You cut {amount} tree(s). Consider planting a tree to maintain ecosystem balance.";
     }
 
     public string PlantSapling()
     {
-        if (_resources.Saplings > 0)
+        int currentTurn = DataHandler.Instance?.TotalTurns ?? 0;
+
+        if (_resources.TryPlantSapling(currentTurn))
         {
-            _resources.Saplings--;
-            //PlantedSaplings.Add(DataHandler.TurnsThisDay);
             return "You have planted a sapling.";
         }
-        else
-        {
-            return "You don't have any saplings to plant.";
-        }
+
+        return "You don't have any saplings to plant.";
     }
 
     public string KillAnimal(int amount = 1)

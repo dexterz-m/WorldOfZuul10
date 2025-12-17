@@ -1,91 +1,68 @@
-﻿using System.Reflection.Metadata;
-using WorldOfZuul.ConsoleUi.Templates;
+﻿using WorldOfZuul.ConsoleUi.Templates;
 using WorldOfZuul.Data;
 using WorldOfZuul.Domain;
 using WorldOfZuul.Domain.CommandHandler;
-using WorldOfZuul.Domain.Rooms;
-
 
 namespace WorldOfZuul.ConsoleUi
 {
     public class Game
     {
-        // Only handle turns, days 
-        private int CurrentTurn {get; set;}
-        private int _currentDay;
         private const int MaxTurnPerDay = 10;
         private const int MaxDay = 10;
-        private bool _continuePlaying = true;
+
         public static int SustainabilityPoints { get; set; } = 10;
-        
-        
-        //How it should look:
-        /*
-         * {MainUiTemplate}
-         *
-         *
-         * 
-         * >
-         */
 
         public Game()
         {
-            
         }
+
         public void Play(DataInitializer initializer)
         {
-            
             DataHandler dh = new DataHandler(initializer);
-            ListUiTemplate listUi = new ListUiTemplate(dh);
             Parser parser = new();
-
-            // -- PrintWelcome();
-            
-            
             MainUiTemplate mainUiTemplate = new MainUiTemplate();
-            mainUiTemplate.RenderMain(_currentDay, MaxDay, CurrentTurn, MaxTurnPerDay, dh);
-            while (_continuePlaying && _currentDay <= MaxDay)
+
+            while (dh.ContinuePlaying)
             {
-                CurrentTurn = 0;
-                //mainUiTemplate.RenderMain(_currentDay, MaxDay, CurrentTurn, MaxTurnPerDay, dh);
-                while (_continuePlaying && CurrentTurn <= MaxTurnPerDay)
+                SustainabilityPoints = dh.Resources.SustainabilityPoints;
+
+                mainUiTemplate.RenderMain(
+                    dh.CurrentDay,
+                    MaxDay,
+                    dh.TurnsThisDay,
+                    MaxTurnPerDay,
+                    dh
+                );
+
+                Console.Write("> ");
+                var input = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(input))
                 {
-                    //mainUiTemplate.RenderMain(_currentDay, MaxDay, CurrentTurn, MaxTurnPerDay, dh);
-                    Console.Write("> ");
+                    Console.WriteLine("Please enter a command.");
+                    continue;
+                }
 
-                    var input = Console.ReadLine();
+                var command = parser.GetCommand(input);
 
-                    if (string.IsNullOrEmpty(input))
-                    {
-                        Console.WriteLine("Please enter a command.");
-                        continue;
-                    }
+                if (command == null)
+                {
+                    Console.WriteLine("I don't know that command.");
+                    continue;
+                }
 
-                    var command = parser.GetCommand(input);
+                Console.WriteLine(dh.HandleCommand(command));
 
-                    if (command == null)
-                    {
-                        Console.WriteLine("I don't know that command.");
-                        continue;
-                    }
+                SustainabilityPoints = dh.Resources.SustainabilityPoints;
 
-                    // Handle global commands here so they work from any room
-                    Console.WriteLine(dh.HandleCommand(command));
-
-
-
-                    // Prevent SustainabilityPoints from going negative
-                    if (SustainabilityPoints < 0)
-                    {
-                        Console.WriteLine($"You lost");
-                        _continuePlaying = false;
-                        // end of the game
-                    }
+                if (dh.Resources.SustainabilityPoints < 0)
+                {
+                    Console.WriteLine("You lost");
+                    break;
                 }
             }
 
             Console.WriteLine("Thank you for playing World of Zuul!");
-        }        
-
+        }
     }
 }
