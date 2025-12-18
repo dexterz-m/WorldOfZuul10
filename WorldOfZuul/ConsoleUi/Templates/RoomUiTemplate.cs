@@ -5,24 +5,26 @@ namespace WorldOfZuul.ConsoleUi.Templates;
 
 public class RoomUiTemplate
 {
-    // handles room specific commands
+
     
-    // How it should look:
-    /*
-     * Room name
-     * Room description
-     *
-     * Room specific commands
-     */
 
-
+    int fLoad = 0;
     public void RenderRoom(DataHandler dh)
     {
         Console.WriteLine($"You are in: {dh.CurrentRoom?.ShortDescription}");
         Console.WriteLine();
         
-        
-        Console.WriteLine(dh.CurrentRoom?.GetEnterRoomMessage());
+        if(dh.t >= 1 || fLoad == 0)
+        {
+            Console.WriteLine(dh.CurrentRoom?.GetEnterRoomMessage());
+            dh.t = 0;
+        }
+
+        if(fLoad == 0)
+        {
+            fLoad = 1;
+        }
+       
 
         // Console.WriteLine($"{dh.CurrentRoom?.LongDescription}");
 

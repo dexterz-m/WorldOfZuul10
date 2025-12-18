@@ -12,6 +12,10 @@ namespace WorldOfZuul.ConsoleUi
 
         public static int SustainabilityPoints { get; set; } = 10;
 
+        public string CommandText;
+
+        public int t;
+
         public Game()
         {
         }
@@ -22,36 +26,56 @@ namespace WorldOfZuul.ConsoleUi
             Parser parser = new();
             MainUiTemplate mainUiTemplate = new MainUiTemplate();
 
+           
+
             while (dh.ContinuePlaying)
             {
                 SustainabilityPoints = dh.Resources.SustainabilityPoints;
 
+                
                 mainUiTemplate.RenderMain(
-                    dh.CurrentDay,
-                    MaxDay,
-                    dh.TurnsThisDay,
-                    MaxTurnPerDay,
-                    dh
-                );
+                   dh.CurrentDay,
+                   MaxDay,
+                   dh.TurnsThisDay,
+                   MaxTurnPerDay,
+                   dh,
+                   CommandText
+               );
+
 
                 Console.Write("> ");
+                
+
                 var input = Console.ReadLine();
 
-                if (string.IsNullOrWhiteSpace(input))
+                switch (input)
                 {
-                    Console.WriteLine("Please enter a command.");
-                    continue;
+                    case null:
+                    case string s when string.IsNullOrWhiteSpace(s):
+                        CommandText = "Please enter a command.";
+                        dh.t++;
+                        continue;
+
+                    default:
+                        var command = parser.GetCommand(input);
+
+                        switch (command)
+                        {
+                            case null:
+                                CommandText = "I don't know that command.";
+                                dh.t++;
+                                continue;
+
+                            default:
+                                CommandText = dh.HandleCommand(command);
+                                break;
+                        }
+                        break;
                 }
 
-                var command = parser.GetCommand(input);
 
-                if (command == null)
-                {
-                    Console.WriteLine("I don't know that command.");
-                    continue;
-                }
 
-                Console.WriteLine(dh.HandleCommand(command));
+
 
                 SustainabilityPoints = dh.Resources.SustainabilityPoints;
 

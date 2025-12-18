@@ -25,8 +25,8 @@ public class Village : Room
                "Here are available commands\n" +
                " - feed [VILLAGER ID] [AMOUNT]           : Feeds villager\n" +
                " - assign [VILLAGER ID] [JOB ID]         : Assigns villager to a task\n" +
-               " - cook [AMOUNT]                         : Converts grain to food\n\n" +
-               "Type a command to perform the action.";
+               " - cook [AMOUNT]                         : Converts grain to food\n" +
+               " - sleep                                 : Sleeps thru the day\n";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)

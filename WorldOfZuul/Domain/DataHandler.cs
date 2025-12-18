@@ -22,6 +22,7 @@ namespace WorldOfZuul.Domain
         public int CurrentDay { get; private set; }
         public int TurnsThisDay { get; private set; }
         public int TotalTurns { get; private set; }
+        public int t;
 
         private const int MaxTurnPerDay = 10;
         private const int MaxDay = 10;
@@ -74,6 +75,7 @@ namespace WorldOfZuul.Domain
             {
                 case "ls":
                     ui = HandleList(command.SecondWord);
+                    t++;
                     break;
 
                 case "cd":
@@ -94,6 +96,7 @@ namespace WorldOfZuul.Domain
 
                 default:
                     ui = CurrentRoom.RoomCommandHandler(command, Resources);
+                    t++;
                     if (TurnRoomCommands.Contains(command.Name))
                     {
                         NextTurn();
@@ -169,6 +172,7 @@ namespace WorldOfZuul.Domain
             Room? room = FindRoomByName(roomName);
             if (room == null)
             {
+                t++;
                 return "Please specify a valid room name.";
             }
 

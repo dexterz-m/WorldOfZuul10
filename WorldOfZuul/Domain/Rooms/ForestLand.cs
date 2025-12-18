@@ -21,8 +21,7 @@ public class Forest : Room
                "Available actions:\n" +
                " - cut    : Cut down one tree (reduces sustainability)\n" +
                " - plant  : Plant a tree (increases sustainability)\n" +
-               " - kill   : Kill one animal (reduces sustainability)\n\n" +
-               "Type a command to perform the action.";
+               " - kill   : Kill one animal (reduces sustainability)\n";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)

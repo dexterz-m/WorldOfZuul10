@@ -16,8 +16,7 @@ public class School : Room
                "Available actions:\n" +
                " - about : Learn about the project\n" +
                " - learn : Learn about sustainability\n" +
-               " - read  : Read about sustainability\n\n" +
-               "Type a command to perform the action.";
+               " - read  : Read about sustainability\n";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)

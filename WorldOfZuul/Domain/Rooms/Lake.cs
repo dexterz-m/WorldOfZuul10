@@ -21,8 +21,7 @@ public class Lake : Room
                $"Grain seeds in your pocket: {_resources.GrainSeeds}\n\n" +
                "Available actions:\n" +
                " - catch fish  : Catch fish\n" +
-               " - feed fish   : Feed fish\n\n" +
-               "Type a command to perform the action.";
+               " - feed fish   : Feed fish\n";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)

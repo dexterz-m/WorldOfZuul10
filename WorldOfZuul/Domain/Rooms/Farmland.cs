@@ -27,8 +27,7 @@ public class Farmland : Room
                " - build farmland           : Build a new farmland\n" +
                " - cut forest               : Cut 5 trees to make freeland (reduces sustainability)\n" +
                " - plant farmland           : Plant on your farmland\n" +
-               " - harvest                  : Harvest your ripe farmland\n\n" +
-               "Type a command to perform the action.";
+               " - harvest                  : Harvest your ripe farmland\n";
     }
 
     public override string RoomCommandHandler(Command command, Resources resources)
