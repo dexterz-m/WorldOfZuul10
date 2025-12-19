@@ -41,19 +41,6 @@ public class Forest : Room
         }
     }
 
-    public string GetForestStats(Resources resources, int sustainabilityPoints)
-    {
-        return "Below are the current stats:\n" +
-               $"Trees: {resources.Trees}\n" +
-               $"Animals: {resources.Animals}\n" +
-               $"Sustainability Points: {sustainabilityPoints}\n\n" +
-               "Available actions:\n" +
-               "cut - cut tree    : Cut down one tree (reduces sustainability)\n" +
-               "plant - plant tree  : Plant a tree (increases sustainability)\n" +
-               "kill - kill animal : Kill one animal (reduces sustainability)\n\n" +
-               "Type a command to perform the action.\n";
-    }
-
     public string CutTree(int amount = 1)
     {
         if (_resources.Trees < amount)

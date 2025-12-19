@@ -34,6 +34,7 @@ public class MainUiTemplate
             Console.WriteLine(" - ls v                                 : List out all villagers and their status");
             Console.WriteLine(" - ls r                                 : List out all rooms");
             Console.WriteLine(" - ls j                                 : List out all jobs");
+            Console.WriteLine(" - ls i                                 : List out all reasources");
             Console.WriteLine(" - cd [ROOM NAME]                       : Goes to room\n");                 
         }
         Console.WriteLine("Type a command to perform the action.\n");

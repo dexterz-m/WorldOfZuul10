@@ -37,13 +37,23 @@ public class Farmland : Room
         switch (command.Name)
         {
             case "build":
-                return BuildFarmland();
+                if (command.SecondWord == "farmland")
+                    return BuildFarmland();
+                else
+                    return "Build what?";
             case "cut":
-                return CutForest();
+                if (command.SecondWord == "forest")
+                    return CutForest();
+                else
+                    return "Cut what?";
             case "harvest":
                 return Harvest();
             case "plant":
-                return PlantFarmland();
+                if (command.SecondWord == "farmland")
+                    return PlantFarmland();
+                else
+                    return "Plant what?";
+                
             default:
                 return "Invalid command in the farmland.";
         }

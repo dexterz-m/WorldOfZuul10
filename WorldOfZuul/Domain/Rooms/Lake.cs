@@ -30,9 +30,16 @@ public class Lake : Room
         switch (command.Name)
         {
             case "catch":
-                return StartFishing();
+                if (command.SecondWord == "fish")
+                    return StartFishing();
+                else
+                    return "Catch what?";
             case "feed":
-                return FeedFish();
+                if (command.SecondWord == "fish")
+                    return FeedFish();
+                else
+                    return "Feed what?";
+                
             default:
                 return "Invalid command for lake.";
         }
